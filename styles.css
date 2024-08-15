@@ -1,0 +1,28 @@
+.tab-button {
+    padding: 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: none;
+}
+.tab-button.active {
+    background-color: #ddd;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+.add-tab {
+    padding: 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: none;
+}
+
+.add-tab:hover {
+    background-color: #ddd;
+}
