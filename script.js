@@ -5,7 +5,7 @@
 // ];
 // Pestañas dinámicas con JavaScript
 const tabs = [
-    { name: 'Pestaña 1', content: '' }
+    { name: 'Pestaña 1', content: '\n \n \n \n \n \n \n \n \n \n \n' }
 ];
 
 const tabButtons = document.getElementById('tab-buttons');
@@ -56,7 +56,7 @@ function openTab(tabIndex) {
 
 addTabButton.onclick = () => {
     const index = tabs.length;
-    tabs.push({ name: `Pestaña ${index + 1}`, content: '' });
+    tabs.push({ name: `Pestaña ${index + 1}`, content: '\n \n \n \n \n \n \n \n \n \n \n' });
 
     const button = document.createElement('button');
     button.textContent = tabs[index].name;
@@ -82,3 +82,5 @@ addTabButton.onclick = () => {
 
 // Abrir la primera pestaña por defecto
 openTab(0);
+
+
