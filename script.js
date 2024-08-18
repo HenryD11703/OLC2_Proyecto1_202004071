@@ -6,11 +6,14 @@
 // Pestañas dinámicas con JavaScript
 const tabs = [
     { name: 'Pestaña 1', content: '\n \n \n \n \n \n \n \n \n \n \n' }
-];
+];    
 
 const tabButtons = document.getElementById('tab-buttons');
 const tabContents = document.getElementById('tab-contents');
 const addTabButton = document.getElementById('add-tab');
+const loadFile = document.getElementById('load-file')
+
+
 
 tabs.forEach((tab, index) => {
     const button = document.createElement('button');
