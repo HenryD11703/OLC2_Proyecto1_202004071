@@ -6,12 +6,15 @@
 // Pestañas dinámicas con JavaScript
 const tabs = [
     { name: 'Pestaña 1', content: '\n \n \n \n \n \n \n \n \n \n \n' }
-];    
+];
 
 const tabButtons = document.getElementById('tab-buttons');
 const tabContents = document.getElementById('tab-contents');
 const addTabButton = document.getElementById('add-tab');
 const loadFile = document.getElementById('load-file')
+const Interpretar = document.getElementById('Interpretar')
+
+
 
 
 
@@ -22,7 +25,7 @@ tabs.forEach((tab, index) => {
     addTabButton.textContent = 'Agregar pestaña';
     addTabButton.className = 'add-tab-button';
     tabButtons.appendChild(addTabButton);
-    
+
 
 
     button.textContent = tab.name;
@@ -81,6 +84,11 @@ addTabButton.onclick = () => {
     editor.getDoc().setValue(tabs[index].content);
 
     openTab(index);
+}
+
+Interpretar.onclick = () => {
+    const index = tabs.length;
+    console.log(tabs[ndex].content)
 }
 
 // Abrir la primera pestaña por defecto
