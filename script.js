@@ -11,6 +11,7 @@ const addTabButton = document.getElementById('add-tab');
 const loadFileBtn = document.getElementById('load-file-btn');
 const loadFileInput = document.getElementById('load-file-input');
 const Interpretar = document.getElementById('Interpretar');
+const Consola = document.getElementById('Consola');
 
 // Crear botones y contenido para las pestañas iniciales
 tabs.forEach((tab, index) => {
