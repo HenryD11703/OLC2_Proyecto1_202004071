@@ -1,21 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Pestañas Dinámicas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
-    <link rel="stylesheet" href="styles.css"> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/dracula.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #282a36;
+            color: #f8f8f2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button, #add-tab, #Interpretar, #load-file-btn {
+            padding: 10px 20px;
+            background-color: #44475a;
+            color: #f8f8f2;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tab-button.active, #add-tab:hover, #Interpretar:hover, #load-file-btn:hover {
+            background-color: #6272a4;
+        }
+
+        #tab-contents {
+            width: 100%;
+            max-width: 800px;
+            background-color: #44475a;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            background-color: #282a36;
+            color: #f8f8f2;
+            border: none;
+            resize: none;
+        }
+
+        #controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #load-file-input {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <h1>Sale compi XD</h1>
     <div id="tab-buttons"></div>
     <div id="tab-contents"></div>
-    <div id="add-tab"></div>
-    <div id="load-file"></div>
 
-    <button id="Interpretar">Interpretar</button>
+    <!-- Controles para añadir pestañas, cargar archivo e interpretar -->
+    <div id="controls">
+        <button id="add-tab">Agregar Pestaña</button>
+        <button id="load-file-btn">Cargar Archivo</button>
+        <input id="load-file-input" type="file">
+        <button id="Interpretar">Interpretar</button>
+    </div>
 
-   <!--sdfasdf /-->
+    <!-- Scripts de CodeMirror -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
