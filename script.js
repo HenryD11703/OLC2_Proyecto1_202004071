@@ -11,12 +11,22 @@ const addTabButton = document.getElementById('add-tab');
 const loadFileBtn = document.getElementById('load-file-btn');
 const loadFileInput = document.getElementById('load-file-input');
 const Interpretar = document.getElementById('Interpretar');
-const Consola = document.getElementById('Consola');
+const consoleTextArea = document.getElementById('console-textarea');
+
+
+const consoleEditor = CodeMirror.fromTextArea(consoleTextArea, {
+  lineNumbers: true,
+  mode: "javascript",
+  theme: "dracula",
+  readOnly: true
+});
 
 // Crear botones y contenido para las pestañas iniciales
 tabs.forEach((tab, index) => {
     createTab(index);
 });
+
+
 
 // Función para crear una nueva pestaña
 function createTab(index) {
@@ -98,10 +108,12 @@ Interpretar.onclick = () => {
     if (activeIndex !== -1) {
         const activeEditor = editors[activeIndex];
         console.log(activeEditor.getValue());
+        consoleEditor.setValue(activeEditor.getValue());
     } else {
         console.error("No hay una pestaña activa.");
     }
 }
+
 
 // Abrir la primera pestaña por defecto
 openTab(0);
