@@ -18,7 +18,8 @@ const consoleEditor = CodeMirror.fromTextArea(consoleTextArea, {
   lineNumbers: true,
   mode: "javascript",
   theme: "dracula",
-  readOnly: true
+  readOnly: true,
+  tabSize: 20
 });
 
 // Crear botones y contenido para las pestañas iniciales
@@ -112,6 +113,11 @@ Interpretar.onclick = () => {
     } else {
         console.error("No hay una pestaña activa.");
     }
+
+    // Actualmente Solo imprime lo del editor
+
+    // Este codigo mandar al parser 
+
 }
 
 
