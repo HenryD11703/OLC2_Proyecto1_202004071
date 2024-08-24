@@ -1,3 +1,4 @@
+
 // Definición inicial de las pestañas
 const tabs = [
     { name: 'Pestaña 1', content: '\n \n \n \n \n \n \n \n \n \n \n' }
@@ -117,6 +118,9 @@ Interpretar.onclick = () => {
     // Actualmente Solo imprime lo del editor
 
     // Este codigo mandar al parser 
+
+    const codigo = activeEditor.getValue();
+    const arbol = parse(codigo)
 
 }
 

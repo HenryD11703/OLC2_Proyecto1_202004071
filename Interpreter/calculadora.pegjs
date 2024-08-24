@@ -1,45 +1,51 @@
 
-Expresion = Suma
+{
+  const crearNodo = (tipoNodo, props) =>{
+    const tipos = {
+      'numero': nodos.Numero,
+      'binaria': nodos.OperacionBinaria,
+      'unaria': nodos.OperacionUnaria,
+    }
 
-Suma
-  = num1:Multiplicacion "+" num2:Suma { return { tipo: "suma", num1, num2 } }
-  / Multiplicacion
+  }
+}
 
-Multiplicacion
-    = num1:Numero "*" num2:Multiplicacion { return { tipo: "multiplicacion", num1, num2 } }
-    / Numero
+//Precedencia de las Operaciones
+// De mayor a menor
 
-Numero
-= [0-9]+( "." [0-9]+ )? { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
-    // = [0-9]+ { return { tipo: "numero", valor: parseInt(text(), 10) } }
+// () o []
+// ! o - (Unaria)
+// / % *
+// + -
+// <  <=  >= > 
+// == !=
+// && 
+// ||
+
+// Para crear la gramatica se tiene que iniciar en la produccion con mayor precedencia
+
+// Ya que es a la que puede llegar directo pasando de uno en uno estas otras producciones
+
+Expresion = OperacionOr
+
+OperacionOr = izq:OperacionAnd expansion:( op:("||") der: OperacionAnd)*
+
+OperacionAnd = izq:OperacionComparar expansion:( op:("&&") der:OperacionComparar)*
+
+OperacionComparar = izq:OperacionRelacional expansion:( op:("==" / "!= ") der:OperacionRelacional)*
+
+OperacionRelacional = izq:Operacion expansion:( op:("<" / "<=" / ">=" / ">") der:Operacion)*
+
+Operacion = izq:OperacionM expansion:( op:("+" / "-") der:OperacionM)*
+
+OperacionM = izq:UnariOp expansion:( op:("!" / "-") der:UnariOp)*
+
+UnariOp = izq:("!" / "-") exp:UnariOp
+        / Numero
+
+Numero = [0-9]+("."[0-9]+)?
+        /"(" exp:Expresion ")"
+        /"[" exp:Expresion "]"
 
 
 
-// 1 + 2 * 3 + 4
-//             |
-
-// Expresion -> Suma1
-
-// Suma1 -> Multiplicacion1 "+" Suma2
-// Multiplicacion1 -> Numero1
-// Numero1 -> 1
-
-// Suma1 -> 1 "+" Suma2
-
-// Suma2 -> Multiplicacion2 "+" Suma3
-// Multiplicacion2 -> Numero2 "*" Multiplicacion3
-// Numero2 -> 2
-// "*"
-// Multiplicacion3 -> Numero3
-// Numero3 -> 3
-
-// Suma2 -> 2 * 3 "+" Suma3
-
-// Suma3 -> Numero4
-// Numero4 -> 4
-
-// Suma2 -> 2 * 3 + 4
-
-// Suma1 -> 1 + 2 * 3 + 4
-
-// Expresion -> 1 + 2 * 3 + 4
