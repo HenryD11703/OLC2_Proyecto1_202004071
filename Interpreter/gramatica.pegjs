@@ -8,7 +8,11 @@
       'agrupacion': nodos.Agrupacion
     }
 
+    const nodo = new tipos[tipoNodo](props);
+    nodo.location = location();
+    return nodo;
   }
+
 }
 
 //Precedencia de las Operaciones
@@ -34,7 +38,7 @@ OperacionOr = izq:OperacionAnd expansion:( op:("||") der: OperacionAnd {return {
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual // esto hace que de operacion actual obtengamos los valores de tipo y der
-      return { tipo, izq: operacionAnterior, der}
+      return crearNodo('binaria', { op:tipo, izq:operacionAnterior, der})
     },
     izq
   )
@@ -45,7 +49,7 @@ OperacionAnd = izq:OperacionComparar expansion:( op:("&&") der:OperacionComparar
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual // esto hace que de operacion actual obtengamos los valores de tipo y der
-      return { tipo, izq: operacionAnterior, der}
+      return crearNodo('binaria', { op:tipo, izq:operacionAnterior, der})
     },
     izq
   )
@@ -56,7 +60,7 @@ OperacionComparar = izq:OperacionRelacional expansion:( op:("==" / "!= ") der:Op
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual // esto hace que de operacion actual obtengamos los valores de tipo y der
-      return { tipo, izq: operacionAnterior, der}
+      return crearNodo('binaria', { op:tipo, izq:operacionAnterior, der})
     },
     izq
   )
@@ -67,7 +71,7 @@ OperacionRelacional = izq:Operacion expansion:( op:("<" / "<=" / ">=" / ">") der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual // esto hace que de operacion actual obtengamos los valores de tipo y der
-      return { tipo, izq: operacionAnterior, der}
+      return crearNodo('binaria', { op:tipo, izq:operacionAnterior, der})
     },
     izq
   )
@@ -78,29 +82,29 @@ Operacion = izq:OperacionM expansion:( op:("+" / "-") der:OperacionM {return { t
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual // esto hace que de operacion actual obtengamos los valores de tipo y der
-      return { tipo, izq: operacionAnterior, der}
+      return crearNodo('binaria', { op:tipo, izq:operacionAnterior, der})
     },
     izq
   )
 }   
 
-OperacionM = izq:UnariOp expansion:( op:("!" / "-") der:UnariOp {return { tipo:op, der}})* {
+OperacionM = izq:UnariOp expansion:( op:("/" / "*") der:UnariOp {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual // esto hace que de operacion actual obtengamos los valores de tipo y der
-      return { tipo, izq: operacionAnterior, der}
+      return crearNodo('binaria', { op:tipo, izq:operacionAnterior, der})
     },
     izq
   )
 }   
 
-UnariOp = izq:("!" / "-") exp:UnariOp
+UnariOp = tipo:("!" / "-") exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
         / Numero
 
-Numero = [0-9]+("."[0-9]+)?
-        /"(" exp:Expresion ")"
-        /"[" exp:Expresion "]"
+Numero = [0-9]+("."[0-9]+)? { return crearNodo('numero', { valor.parseFloat(text(),10)}) }
+        /"(" exp:Expresion ")" { return crearNodo('agrupacion', {exp}) }
+        /"[" exp:Expresion "]" { return crearNodo('agrupacion', {exp}) }
 
 
 

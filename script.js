@@ -1,3 +1,6 @@
+import { parse } from './Interpreter/gramatica.js';
+import { InterpretarVisitor } from './Interpreter/Interprete.js';
+
 
 // Definición inicial de las pestañas
 const tabs = [
@@ -108,9 +111,15 @@ Interpretar.onclick = () => {
                              .findIndex(button => button.classList.contains('active'));
 
     if (activeIndex !== -1) {
-        const activeEditor = editors[activeIndex];
+/*         const activeEditor = editors[activeIndex];
         console.log(activeEditor.getValue());
-        consoleEditor.setValue(activeEditor.getValue());
+        consoleEditor.setValue(activeEditor.getValue()); */
+
+        const activeEditor = editors[activeIndex];
+        const arbol = parse(activeEditor.getValue());
+        ast.innerHTML = JSON.stringify(arbol, null, 2);
+        
+
     } else {
         console.error("No hay una pestaña activa.");
     }
@@ -119,8 +128,6 @@ Interpretar.onclick = () => {
 
     // Este codigo mandar al parser 
 
-    const codigo = activeEditor.getValue();
-    const arbol = parse(codigo)
 
 }
 
