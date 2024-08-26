@@ -165,4 +165,120 @@ export class Numero extends Expresion {
     }
 }
     
-export default { Expresion, OperacionBinaria, OperacionUnaria, Agrupacion, Numero }
+export class DeclaracionVariable extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo de la variable
+ * @param {string} options.id Identificador de la variable
+ * @param {Expresion} options.valor Valor inicial de la variable
+    */
+    constructor({ tipo, id, valor }) {
+        super();
+        
+        /**
+         * Tipo de la variable
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador de la variable
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Valor inicial de la variable
+         * @type {Expresion}
+        */
+        this.valor = valor;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitDeclaracionVariable(this);
+    }
+}
+    
+export class ReferenciaVariable extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.id Identificador de la variable
+    */
+    constructor({ id }) {
+        super();
+        
+        /**
+         * Identificador de la variable
+         * @type {Expresion}
+        */
+        this.id = id;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitReferenciaVariable(this);
+    }
+}
+    
+export class Print extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.exp Expresion a imprimir
+    */
+    constructor({ exp }) {
+        super();
+        
+        /**
+         * Expresion a imprimir
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitPrint(this);
+    }
+}
+    
+export class Statement extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.exp Expresion a ejecutar
+    */
+    constructor({ exp }) {
+        super();
+        
+        /**
+         * Expresion a ejecutar
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitStatement(this);
+    }
+}
+    
+export default { Expresion, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Statement }

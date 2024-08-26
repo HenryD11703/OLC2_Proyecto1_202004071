@@ -1,46 +1,49 @@
-import { BaseVisitor } from "../visitor";
+import { BaseVisitor } from "../visitor.js";
+import { Entorno } from "./entorno.js";
 
 export class InterpretarVisitor extends BaseVisitor {
     constructor(){
         super();
+        this.entornoActual = new Entorno(); //Entorno Padre
+        this.consola = '' // Cadena para imprimir en la consola
     }
     /**
      * @type {BaseVisitor['visitOperacionBinaria']}
      */
     visitOperacionBinaria(node) {
-        const izquierdo = node.izq.accept(this);
-        const derecho = node.der.accept(this);
+        const izq = node.izq.accept(this);
+        const der = node.der.accept(this);
 
-        switch (node.operacion) {
+        switch (node.op) {
             case '+':
-                return izquierdo + derecho;
+                return izq + der;
             case '-':
-                return izquierdo - derecho;
+                return izq - der;
             case '*':
-                return izquierdo * derecho;
+                return izq * der;
             case '/':
-                if (derecho === 0) {
-                    throw new Error('Division por cero');
+                if (der === 0) {
+                    console.log('Division por cero');
                 }
-                return izquierdo / derecho;
+                return null
             case '||':
-                return Boolean(izquierdo) || Boolean(derecho);
+                return Boolean(izq) || Boolean(der);
             case '&&':
-                return Boolean(izquierdo) && Boolean(derecho);
+                return Boolean(izq) && Boolean(der);
             case '==':
-                return izquierdo === derecho;
+                return izq === der;
             case '!=':
-                return izquierdo !== derecho;
+                return izq !== der;
             case '>':
-                return izquierdo > derecho;
+                return izq > der;
             case '<':
-                return izquierdo < derecho;
+                return izq < der;
             case '>=':
-                return izquierdo >= derecho;
+                return izq >= der;
             case '<=':
-                return izquierdo <= derecho;
+                return izq <= der;
             case '%':
-                return izquierdo % derecho;
+                return izq % der;
             default:
                 throw new Error(`Operador ${node.operacion} no soportado`);
         }
@@ -50,18 +53,19 @@ export class InterpretarVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitOperacionUnaria']}
      */
     visitOperacionUnaria(node) {
-        const operando = node.operando.accept(this);
+        const exp = node.exp.accept(this);
 
-        switch (node.operacion) {
+        switch (node.op) {
             case '!':
-                return !Boolean(operando);
+                return !Boolean(exp);
             case '-':
-                return -operando;
+                return -exp;
             default:
-                throw new Error(`Operador ${node.operacion} no soportado`);
+                throw new Error(`Operador ${node.op} no soportado`);
         }
     }
 
+        
     /**
      * @type {BaseVisitor['visitNumero']}
      */
@@ -70,9 +74,50 @@ export class InterpretarVisitor extends BaseVisitor {
     }
     
     /**
-     * @type {BaseVisitor['visitAgrupacion']}
-     */
+      * @type {BaseVisitor['visitAgrupacion']}
+      */
     visitAgrupacion(node) {
         return node.exp.accept(this);
+    }
+
+    /**
+     * @type {BaseVisitor['visitDeclaracionVariable']}
+     */
+    visitDeclaracionVariable(node) {
+        const tipo = node.tipo;
+        const nombre = node.id;
+        const valor = node.valor.accept(this);
+
+        this.entornoActual.agregarVariable(nombre, tipo, valor);
+    }
+    
+    /**
+     * @type {BaseVisitor['visitReferenciaVariable']}
+     */
+    visitReferenciaVariable(node) {
+        const nombre = node.id;
+        const valor = this.entornoActual.obtenerValorVariable(nombre);
+
+        if (valor === undefined) {
+            console.log(`Variable ${nombre} no definida`);
+        }
+
+        return valor;
+    }
+
+    
+    /**
+     * @type {BaseVisitor['visitPrint']}
+     */
+    visitPrint(node) {
+        const exp = node.exp.accept(this);
+        this.consola += `${exp}\n`;
+    }
+
+    /**
+     * @type {BaseVisitor['visitStatement']}
+     */
+    visitStatement(node) {
+        node.exp.accept(this);
     }
 }

@@ -1,6 +1,5 @@
-import { parse } from './Interpreter/gramatica.js';
-import { InterpretarVisitor } from './Interpreter/Interprete.js';
-
+import { InterpretarVisitor } from "./Interpreter/Interprete.js";
+import { parse } from "./Interpreter/gramatica.js";
 
 // Definición inicial de las pestañas
 const tabs = [
@@ -16,6 +15,8 @@ const loadFileBtn = document.getElementById('load-file-btn');
 const loadFileInput = document.getElementById('load-file-input');
 const Interpretar = document.getElementById('Interpretar');
 const consoleTextArea = document.getElementById('console-textarea');
+
+const ast = document.getElementById('ast');
 
 
 const consoleEditor = CodeMirror.fromTextArea(consoleTextArea, {
@@ -111,14 +112,27 @@ Interpretar.onclick = () => {
                              .findIndex(button => button.classList.contains('active'));
 
     if (activeIndex !== -1) {
-/*         const activeEditor = editors[activeIndex];
+/*      const activeEditor = editors[activeIndex];
         console.log(activeEditor.getValue());
         consoleEditor.setValue(activeEditor.getValue()); */
 
         const activeEditor = editors[activeIndex];
-        const arbol = parse(activeEditor.getValue());
-        ast.innerHTML = JSON.stringify(arbol, null, 2);
+
         
+        const codigo = activeEditor.getValue();
+        const sentencias = parse(codigo);
+
+        ast.innerHTML = JSON.stringify(sentencias, null, 2);
+        
+        
+        const interprete = new InterpretarVisitor();
+
+        console.log({sentencias})
+        sentencias.forEach(sentencia => sentencia.accept(interprete))
+
+        
+
+
 
     } else {
         console.error("No hay una pestaña activa.");

@@ -15,6 +15,18 @@
 
  * @typedef {import('./nodos').Numero} Numero
 
+
+ * @typedef {import('./nodos').DeclaracionVariable} DeclaracionVariable
+
+
+ * @typedef {import('./nodos').ReferenciaVariable} ReferenciaVariable
+
+
+ * @typedef {import('./nodos').Print} Print
+
+
+ * @typedef {import('./nodos').Statement} Statement
+
  */
 
 
@@ -67,6 +79,42 @@ export class BaseVisitor {
      */
     visitNumero(node) {
         throw new Error('Metodo visitNumero no implementado');
+    }
+    
+
+    /**
+     * @param {DeclaracionVariable} node
+     * @returns {any}
+     */
+    visitDeclaracionVariable(node) {
+        throw new Error('Metodo visitDeclaracionVariable no implementado');
+    }
+    
+
+    /**
+     * @param {ReferenciaVariable} node
+     * @returns {any}
+     */
+    visitReferenciaVariable(node) {
+        throw new Error('Metodo visitReferenciaVariable no implementado');
+    }
+    
+
+    /**
+     * @param {Print} node
+     * @returns {any}
+     */
+    visitPrint(node) {
+        throw new Error('Metodo visitPrint no implementado');
+    }
+    
+
+    /**
+     * @param {Statement} node
+     * @returns {any}
+     */
+    visitStatement(node) {
+        throw new Error('Metodo visitStatement no implementado');
     }
     
 }

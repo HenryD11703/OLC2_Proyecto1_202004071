@@ -3,15 +3,30 @@
   const crearNodo = (tipoNodo, props) =>{
     const tipos = {
       'numero': nodos.Numero,
+      'agrupacion': nodos.Agrupacion,
       'binaria': nodos.OperacionBinaria,
       'unaria': nodos.OperacionUnaria,
-      'agrupacion': nodos.Agrupacion
+      'declaracionVar': nodos.DeclaracionVariable,
+      'accesoVar': nodos.ReferenciaVariable,
+      'print': nodos.Print,
+      'statement': nodos.Statement
     }
 
     const nodo = new tipos[tipoNodo](props);
     nodo.location = location();
     return nodo;
   }
+
+    const _ = optional(() => {
+    return repeat1(() => {
+      return choice(
+        () => CharacterSet.parse([ '\t', '\n', '\r', ' ']),
+        () => Comment.parse()
+      );
+    });
+  });
+
+   options.whitespace = _;
 
 }
 
@@ -30,6 +45,20 @@
 // Para crear la gramatica se tiene que iniciar en la produccion con mayor precedencia
 
 // Ya que es a la que puede llegar directo pasando de uno en uno estas otras producciones
+
+Codigo = dcl:Declaracion* { return dcl }
+
+Declaracion = vard:Variable { return vard }
+          /   stmt:Statement { return stmt }
+
+Variable = tipo:("int" / "float" / "string" / "boolean" / "char") id:Identificador "=" exp:Expresion ";"{
+  return crearNodo('declaracionVar', { tipo, id, valor:exp})
+}
+
+Statement = "print(" exp:Expresion ")" ";"
+          / exp:Expresion ";" { return crearNodo('statement', {exp})}
+
+Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = OperacionOr
 
@@ -102,9 +131,9 @@ OperacionM = izq:UnariOp expansion:( op:("/" / "*") der:UnariOp {return { tipo:o
 UnariOp = tipo:("!" / "-") exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
         / Numero
 
-Numero = [0-9]+("."[0-9]+)? { return crearNodo('numero', { valor.parseFloat(text(),10)}) }
-        /"(" exp:Expresion ")" { return crearNodo('agrupacion', {exp}) }
-        /"[" exp:Expresion "]" { return crearNodo('agrupacion', {exp}) }
+Numero = [0-9]+("."[0-9]+)? { return crearNodo('numero', { valor: parseFloat(text(),10)}) }
+        /"(" exp:Expresion ")" { return crearNodo('agrupacion', { exp }) }
+        /"[" exp:Expresion "]" { return crearNodo('agrupacion', { exp }) }
 
 
 
