@@ -16,18 +16,6 @@
     nodo.location = location();
     return nodo;
   }
-
-    const _ = optional(() => {
-    return repeat1(() => {
-      return choice(
-        () => CharacterSet.parse([ '\t', '\n', '\r', ' ']),
-        () => Comment.parse()
-      );
-    });
-  });
-
-   options.whitespace = _;
-
 }
 
 //Precedencia de las Operaciones
@@ -46,23 +34,25 @@
 
 // Ya que es a la que puede llegar directo pasando de uno en uno estas otras producciones
 
-Codigo = dcl:Declaracion* { return dcl }
+Codigo = dcl:Declaracion* _ { return dcl }
 
-Declaracion = vard:Variable { return vard }
-          /   stmt:Statement { return stmt }
-
-Variable = tipo:("int" / "float" / "string" / "boolean" / "char") id:Identificador "=" exp:Expresion ";"{
+Declaracion = dcl:Variable _ { return dcl }
+          /   stmt:Statement _ { return stmt }
+ 
+Variable =  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identificador  _ "=" _ exp:Expresion _ ";"{
   return crearNodo('declaracionVar', { tipo, id, valor:exp})
 }
 
-Statement = "print(" exp:Expresion ")" ";"
+// TODO: hacer el print
+
+Statement = "print(" _ exp:Expresion ")" _ ";" { return crearNodo('print', {exp}) }
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = OperacionOr
 
-OperacionOr = izq:OperacionAnd expansion:( op:("||") der: OperacionAnd {return { tipo:op, der}})* {
+OperacionOr = izq:OperacionAnd expansion:( _ op:("||") _ der: OperacionAnd {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -73,7 +63,7 @@ OperacionOr = izq:OperacionAnd expansion:( op:("||") der: OperacionAnd {return {
   )
 }
 
-OperacionAnd = izq:OperacionComparar expansion:( op:("&&") der:OperacionComparar {return { tipo:op, der}})* {
+OperacionAnd = izq:OperacionComparar expansion:( _ op:("&&") _ der:OperacionComparar {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -84,7 +74,7 @@ OperacionAnd = izq:OperacionComparar expansion:( op:("&&") der:OperacionComparar
   )
 }   
 
-OperacionComparar = izq:OperacionRelacional expansion:( op:("==" / "!= ") der:OperacionRelacional {return { tipo:op, der}})* {
+OperacionComparar = izq:OperacionRelacional expansion:( _ op:("==" / "!= ") _ der:OperacionRelacional {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -95,7 +85,7 @@ OperacionComparar = izq:OperacionRelacional expansion:( op:("==" / "!= ") der:Op
   )
 }   
 
-OperacionRelacional = izq:Operacion expansion:( op:("<" / "<=" / ">=" / ">") der:Operacion {return { tipo:op, der}})* {
+OperacionRelacional = izq:Operacion expansion:( _ op:("<" / "<=" / ">=" / ">") _ der:Operacion {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -106,7 +96,7 @@ OperacionRelacional = izq:Operacion expansion:( op:("<" / "<=" / ">=" / ">") der
   )
 }   
 
-Operacion = izq:OperacionM expansion:( op:("+" / "-") der:OperacionM {return { tipo:op, der}})* {
+Operacion = izq:OperacionM expansion:( _ op:("+" / "-") _ der:OperacionM {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -117,7 +107,7 @@ Operacion = izq:OperacionM expansion:( op:("+" / "-") der:OperacionM {return { t
   )
 }   
 
-OperacionM = izq:UnariOp expansion:( op:("/" / "*") der:UnariOp {return { tipo:op, der}})* {
+OperacionM = izq:UnariOp  expansion:( _ op:("/" / "*" / "%") _ der:UnariOp {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -128,12 +118,12 @@ OperacionM = izq:UnariOp expansion:( op:("/" / "*") der:UnariOp {return { tipo:o
   )
 }   
 
-UnariOp = tipo:("!" / "-") exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
+UnariOp = tipo:("!" / "-") _ exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
         / Numero
 
 Numero = [0-9]+("."[0-9]+)? { return crearNodo('numero', { valor: parseFloat(text(),10)}) }
-        /"(" exp:Expresion ")" { return crearNodo('agrupacion', { exp }) }
-        /"[" exp:Expresion "]" { return crearNodo('agrupacion', { exp }) }
+        /"(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
+        /"[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
+        / id:Identificador { return crearNodo('accesoVar', {id}) }
 
-
-
+_ = [ \t\n\r]*

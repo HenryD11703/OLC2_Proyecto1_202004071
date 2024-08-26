@@ -130,7 +130,7 @@ Interpretar.onclick = () => {
         console.log({sentencias})
         sentencias.forEach(sentencia => sentencia.accept(interprete))
 
-        
+        consoleEditor.setValue(interprete.consola);       
 
 
 
