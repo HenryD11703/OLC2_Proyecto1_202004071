@@ -45,12 +45,15 @@ Variable =  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identi
 
 // TODO: hacer el print
 
-Statement = "print(" _ exp:Expresion ")" _ ";" { return crearNodo('print', {exp}) }
+Statement = "System.out.println(" _ 
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = OperacionOr
+          / Cadena
+
+Cadena = "\"" texto:([^"\\] / "\\" .)* "\"" { return crearNodo('cadena', texto) }
 
 OperacionOr = izq:OperacionAnd expansion:( _ op:("||") _ der: OperacionAnd {return { tipo:op, der}})* {
   // Asociatividad de izq a der
@@ -121,9 +124,13 @@ OperacionM = izq:UnariOp  expansion:( _ op:("/" / "*" / "%") _ der:UnariOp {retu
 UnariOp = tipo:("!" / "-") _ exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
         / Numero
 
+
+
 Numero = [0-9]+("."[0-9]+)? { return crearNodo('numero', { valor: parseFloat(text(),10)}) }
         /"(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
         /"[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
         / id:Identificador { return crearNodo('accesoVar', {id}) }
 
 _ = [ \t\n\r]*
+
+
