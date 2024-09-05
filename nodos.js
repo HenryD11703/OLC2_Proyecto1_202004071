@@ -281,4 +281,29 @@ export class Statement extends Expresion {
     }
 }
     
-export default { Expresion, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Statement }
+export class Cadena extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.valor Valor de la cadena
+    */
+    constructor({ valor }) {
+        super();
+        
+        /**
+         * Valor de la cadena
+         * @type {string}
+        */
+        this.valor = valor;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitCadena(this);
+    }
+}
+    
+export default { Expresion, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Statement, Cadena }

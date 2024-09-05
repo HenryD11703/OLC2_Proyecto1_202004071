@@ -27,6 +27,9 @@
 
  * @typedef {import('./nodos').Statement} Statement
 
+
+ * @typedef {import('./nodos').Cadena} Cadena
+
  */
 
 
@@ -115,6 +118,15 @@ export class BaseVisitor {
      */
     visitStatement(node) {
         throw new Error('Metodo visitStatement no implementado');
+    }
+    
+
+    /**
+     * @param {Cadena} node
+     * @returns {any}
+     */
+    visitCadena(node) {
+        throw new Error('Metodo visitCadena no implementado');
     }
     
 }

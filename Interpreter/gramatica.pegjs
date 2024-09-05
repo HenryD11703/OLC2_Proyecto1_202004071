@@ -9,7 +9,8 @@
       'declaracionVar': nodos.DeclaracionVariable,
       'accesoVar': nodos.ReferenciaVariable,
       'print': nodos.Print,
-      'statement': nodos.Statement
+      'statement': nodos.Statement,
+      'Cadena': nodos.Cadena
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -43,10 +44,14 @@ Variable =  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identi
   return crearNodo('declaracionVar', { tipo, id, valor:exp})
 }
 
-// TODO: hacer el print
+// TODO: cambiar el print para que hacepte una lista de expresiones
+// System.out.println(1, "Hola", 2+3) -> [1, "Hola", 2+3] e imprimir los datos de este array  
 
-Statement = "System.out.println(" _ 
+// Statement = "System.out.println(" _ exp:Expresion ")" ";" { return crearNodo('print', {exp})}
+Statement = "System.out.println(" _ exp:Expresion* ")" ";" { return crearNodo('print', {exp})}
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
+
+
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 

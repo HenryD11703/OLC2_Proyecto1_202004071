@@ -72,6 +72,14 @@ export class InterpretarVisitor extends BaseVisitor {
     visitNumero(node) {
         return node.valor;
     }
+
+    /**
+     * @type {BaseVisitor['visitCadena']}
+     */
+    visitCadena(node) {
+        return node.valor;
+    }
+
     
     /**
       * @type {BaseVisitor['visitAgrupacion']}
