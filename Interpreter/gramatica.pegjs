@@ -48,7 +48,7 @@ Variable =  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identi
 // System.out.println(1, "Hola", 2+3) -> [1, "Hola", 2+3] e imprimir los datos de este array  
 
 // Statement = "System.out.println(" _ exp:Expresion ")" ";" { return crearNodo('print', {exp})}
-Statement = "System.out.println(" _ exp:Expresion* ")" ";" { return crearNodo('print', {exp})}
+Statement = "System.out.println(" _ exp:Expresion _ " )" _ ";" { return crearNodo('print', {exp})}
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
 
 
