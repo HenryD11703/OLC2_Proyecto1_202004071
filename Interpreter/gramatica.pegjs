@@ -44,14 +44,12 @@ Variable =  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identi
   return crearNodo('declaracionVar', { tipo, id, valor:exp})
 }
 
-// TODO: cambiar el print para que hacepte una lista de expresiones
-// System.out.println(1, "Hola", 2+3) -> [1, "Hola", 2+3] e imprimir los datos de este array  
 
 // Statement = "System.out.println(" _ exp:Expresion ")" ";" { return crearNodo('print', {exp})}
-Statement = "System.out.println(" _ exp:Expresion _ " )" _ ";" { return crearNodo('print', {exp})}
+Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return crearNodo('print', {args})}
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
 
-
+ArgumentosPrint = arg:Expresion args:("," _ exp:Expresion { return exp })* { return [arg, ...args] }
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 

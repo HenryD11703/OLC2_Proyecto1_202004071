@@ -118,8 +118,9 @@ export class InterpretarVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitPrint']}
      */
     visitPrint(node) {
-        const exp = node.exp.accept(this);
-        this.consola += `${exp}\n`;
+        const args = node.args.map(arg => arg.accept(this));
+        const output = args.join(' ');
+        this.consola += output + '\n';
     }
 
     /**
