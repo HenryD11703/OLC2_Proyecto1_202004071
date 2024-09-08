@@ -19,7 +19,13 @@ export class Entorno {
      * @returns 
      */
     obtenerValorVariable(id) {
-        return this.variables[id]?.valor;
+        if (this.verificarVariableExiste(id)) {
+            return { tipo: this.variables[id].tipo, valor: this.variables[id].valor };
+        } else {
+            //si la variable no existe se retorna un objeto con tipo null y valor null
+            console.log(`Error de referencia: variable ${id} no declarada`);
+            return { tipo: null, valor: null };
+        }
     }
 
     /**
@@ -29,10 +35,11 @@ export class Entorno {
      */
     verificarVariableExiste(id) {
         return this.variables[id]!== undefined;
+        
     }
 
     /**
-     * 
+
      * @param {string} id 
      * @param {string} tipo 
      * @returns 

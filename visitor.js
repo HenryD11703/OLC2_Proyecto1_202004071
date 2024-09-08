@@ -4,6 +4,9 @@
  * @typedef {import('./nodos').Expresion} Expresion
 
 
+ * @typedef {import('./nodos').Nativo} Nativo
+
+
  * @typedef {import('./nodos').OperacionBinaria} OperacionBinaria
 
 
@@ -46,6 +49,15 @@ export class BaseVisitor {
      */
     visitExpresion(node) {
         throw new Error('Metodo visitExpresion no implementado');
+    }
+    
+
+    /**
+     * @param {Nativo} node
+     * @returns {any}
+     */
+    visitNativo(node) {
+        throw new Error('Metodo visitNativo no implementado');
     }
     
 

@@ -10,7 +10,8 @@
       'accesoVar': nodos.ReferenciaVariable,
       'print': nodos.Print,
       'statement': nodos.Statement,
-      'Cadena': nodos.Cadena
+      'Cadena': nodos.Cadena,
+      'nativo': nodos.Nativo
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -54,9 +55,7 @@ ArgumentosPrint = arg:Expresion args:("," _ exp:Expresion { return exp })* { ret
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = OperacionOr
-          / Cadena
 
-Cadena = "\"" texto:([^"\\] / "\\" .)* "\"" { return crearNodo('cadena', texto) }
 
 OperacionOr = izq:OperacionAnd expansion:( _ op:("||") _ der: OperacionAnd {return { tipo:op, der}})* {
   // Asociatividad de izq a der
@@ -125,11 +124,20 @@ OperacionM = izq:UnariOp  expansion:( _ op:("/" / "*" / "%") _ der:UnariOp {retu
 }   
 
 UnariOp = tipo:("!" / "-") _ exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
-        / Numero
+        / Nativo
+
+//Se cambio de solo Numero a Nativo para manejar los tipos y hacer las verificaciones
+//semanticas necesarias, para esto tambien sera necesario hacer la expresion de nativo 
+//Que retorne el valor como tal para cuando se interprete la expresion de cada operacion
+//se obtenga el valor y se pueda verificar el tipo
 
 
-
-Numero = [0-9]+("."[0-9]+)? { return crearNodo('numero', { valor: parseFloat(text(),10)}) }
+Nativo = [0-9]+ { return crearNodo('nativo', { tipo: 'int', valor: parseInt(text(), 10) }) }
+        / [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: parseFloat(text(), 10) }) }
+        / "true" { return crearNodo('nativo', { tipo: 'boolean', valor: true }) }
+        / "false" { return crearNodo('nativo', { tipo: 'boolean', valor: false }) }
+        / '"' [^"]* '"' { return crearNodo('nativo', { tipo: 'string', valor: text() }) }
+        / "'" . "'" { return crearNodo('nativo', { tipo: 'char', valor: text()[1] }) }
         /"(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
         /"[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
         / id:Identificador { return crearNodo('accesoVar', {id}) }

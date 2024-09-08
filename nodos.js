@@ -41,6 +41,39 @@ export class Expresion  {
     }
 }
     
+export class Nativo extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo de dato del nativo
+ * @param {any} options.valor Valor del nativo
+    */
+    constructor({ tipo, valor }) {
+        super();
+        
+        /**
+         * Tipo de dato del nativo
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Valor del nativo
+         * @type {any}
+        */
+        this.valor = valor;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitNativo(this);
+    }
+}
+    
 export class OperacionBinaria extends Expresion {
 
     /**
@@ -306,4 +339,4 @@ export class Cadena extends Expresion {
     }
 }
     
-export default { Expresion, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Statement, Cadena }
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Statement, Cadena }
