@@ -79,7 +79,7 @@ OperacionAnd = izq:OperacionComparar expansion:( _ op:("&&") _ der:OperacionComp
   )
 }   
 
-OperacionComparar = izq:OperacionRelacional expansion:( _ op:("==" / "!= ") _ der:OperacionRelacional {return { tipo:op, der}})* {
+OperacionComparar = izq:OperacionRelacional expansion:( _ op:("!=" / "==") _ der:OperacionRelacional {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -89,8 +89,9 @@ OperacionComparar = izq:OperacionRelacional expansion:( _ op:("==" / "!= ") _ de
     izq
   )
 }   
-
-OperacionRelacional = izq:Operacion expansion:( _ op:("<" / "<=" / ">=" / ">") _ der:Operacion {return { tipo:op, der}})* {
+// Es importante que cuando se crean las ER o palabras reservadas se hagan en orden
+// asi como >= tiene que ir antes que > para que no reconozca primero el > y haga ya su match con la expresion
+OperacionRelacional = izq:Operacion expansion:( _ op:("<=" / ">=" / ">" / "<") _ der:Operacion {return { tipo:op, der}})* {
   // Asociatividad de izq a der
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -132,14 +133,14 @@ UnariOp = tipo:("!" / "-") _ exp:UnariOp { return crearNodo('unaria', { op:tipo,
 //se obtenga el valor y se pueda verificar el tipo
 
 
-Nativo = [0-9]+ { return crearNodo('nativo', { tipo: 'int', valor: parseInt(text(), 10) }) }
-        / [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: parseFloat(text(), 10) }) }
+Nativo = [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: parseFloat(text(), 10) }) }
+        / [0-9]+ { return crearNodo('nativo', { tipo: 'int', valor: parseInt(text(), 10) }) }
         / "true" { return crearNodo('nativo', { tipo: 'boolean', valor: true }) }
         / "false" { return crearNodo('nativo', { tipo: 'boolean', valor: false }) }
-        / '"' [^"]* '"' { return crearNodo('nativo', { tipo: 'string', valor: text() }) }
-        / "'" . "'" { return crearNodo('nativo', { tipo: 'char', valor: text()[1] }) }
-        /"(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
-        /"[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
+        / '"' ([^"\\] / "\\" .)* '"' { return crearNodo('nativo', { tipo: 'string', valor: JSON.parse(text()) }) }
+        / "'" . "'" { return crearNodo('nativo', { tipo: 'char', valor: text().charAt(1) }) }
+        / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
+        / "[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
         / id:Identificador { return crearNodo('accesoVar', {id}) }
 
 _ = [ \t\n\r]*
