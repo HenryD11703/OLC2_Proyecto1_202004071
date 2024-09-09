@@ -22,6 +22,12 @@
  * @typedef {import('./nodos').DeclaracionVariable} DeclaracionVariable
 
 
+ * @typedef {import('./nodos').DeclaracionSimple} DeclaracionSimple
+
+
+ * @typedef {import('./nodos').DeclaracionSinTipo} DeclaracionSinTipo
+
+
  * @typedef {import('./nodos').ReferenciaVariable} ReferenciaVariable
 
 
@@ -31,7 +37,13 @@
  * @typedef {import('./nodos').Statement} Statement
 
 
- * @typedef {import('./nodos').Cadena} Cadena
+ * @typedef {import('./nodos').Asignacion} Asignacion
+
+
+ * @typedef {import('./nodos').Bloque} Bloque
+
+
+ * @typedef {import('./nodos').If} If
 
  */
 
@@ -107,6 +119,24 @@ export class BaseVisitor {
     
 
     /**
+     * @param {DeclaracionSimple} node
+     * @returns {any}
+     */
+    visitDeclaracionSimple(node) {
+        throw new Error('Metodo visitDeclaracionSimple no implementado');
+    }
+    
+
+    /**
+     * @param {DeclaracionSinTipo} node
+     * @returns {any}
+     */
+    visitDeclaracionSinTipo(node) {
+        throw new Error('Metodo visitDeclaracionSinTipo no implementado');
+    }
+    
+
+    /**
      * @param {ReferenciaVariable} node
      * @returns {any}
      */
@@ -134,11 +164,29 @@ export class BaseVisitor {
     
 
     /**
-     * @param {Cadena} node
+     * @param {Asignacion} node
      * @returns {any}
      */
-    visitCadena(node) {
-        throw new Error('Metodo visitCadena no implementado');
+    visitAsignacion(node) {
+        throw new Error('Metodo visitAsignacion no implementado');
+    }
+    
+
+    /**
+     * @param {Bloque} node
+     * @returns {any}
+     */
+    visitBloque(node) {
+        throw new Error('Metodo visitBloque no implementado');
+    }
+    
+
+    /**
+     * @param {If} node
+     * @returns {any}
+     */
+    visitIf(node) {
+        throw new Error('Metodo visitIf no implementado');
     }
     
 }

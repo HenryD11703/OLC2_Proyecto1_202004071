@@ -239,6 +239,72 @@ export class DeclaracionVariable extends Expresion {
     }
 }
     
+export class DeclaracionSimple extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo de la variable
+ * @param {string} options.id Identificador de la variable
+    */
+    constructor({ tipo, id }) {
+        super();
+        
+        /**
+         * Tipo de la variable
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador de la variable
+         * @type {string}
+        */
+        this.id = id;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitDeclaracionSimple(this);
+    }
+}
+    
+export class DeclaracionSinTipo extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador de la variable
+ * @param {Expresion} options.valor Valor inicial de la variable
+    */
+    constructor({ id, valor }) {
+        super();
+        
+        /**
+         * Identificador de la variable
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Valor inicial de la variable
+         * @type {Expresion}
+        */
+        this.valor = valor;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitDeclaracionSinTipo(this);
+    }
+}
+    
 export class ReferenciaVariable extends Expresion {
 
     /**
@@ -314,20 +380,28 @@ export class Statement extends Expresion {
     }
 }
     
-export class Cadena extends Expresion {
+export class Asignacion extends Expresion {
 
     /**
     * @param {Object} options
-    * @param {string} options.valor Valor de la cadena
+    * @param {Expresion} options.id Identificador de la variable
+ * @param {Expresion} options.exp Expresion a asignar
     */
-    constructor({ valor }) {
+    constructor({ id, exp }) {
         super();
         
         /**
-         * Valor de la cadena
-         * @type {string}
+         * Identificador de la variable
+         * @type {Expresion}
         */
-        this.valor = valor;
+        this.id = id;
+
+
+        /**
+         * Expresion a asignar
+         * @type {Expresion}
+        */
+        this.exp = exp;
 
     }
 
@@ -335,8 +409,74 @@ export class Cadena extends Expresion {
      * @param {BaseVisitor} visitor
      */
     accept(visitor) {
-        return visitor.visitCadena(this);
+        return visitor.visitAsignacion(this);
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Statement, Cadena }
+export class Bloque extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion[]} options.dcls Declaraciones y expresiones en el bloque
+    */
+    constructor({ dcls }) {
+        super();
+        
+        /**
+         * Declaraciones y expresiones en el bloque
+         * @type {Expresion[]}
+        */
+        this.dcls = dcls;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitBloque(this);
+    }
+}
+    
+export class If extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.condicion Expresion que debe ser verdadera para ejecutar el bloque if
+ * @param {Expresion} options.bloqueTrue Bloque de codigo a ejecutar si la condicion es verdadera
+ * @param {Expresion|null} options.bloqueFalse Bloque de codigo a ejecutar si la condicion es falsa (null si no se especifica)
+    */
+    constructor({ condicion, bloqueTrue, bloqueFalse }) {
+        super();
+        
+        /**
+         * Expresion que debe ser verdadera para ejecutar el bloque if
+         * @type {Expresion}
+        */
+        this.condicion = condicion;
+
+
+        /**
+         * Bloque de codigo a ejecutar si la condicion es verdadera
+         * @type {Expresion}
+        */
+        this.bloqueTrue = bloqueTrue;
+
+
+        /**
+         * Bloque de codigo a ejecutar si la condicion es falsa (null si no se especifica)
+         * @type {Expresion|null}
+        */
+        this.bloqueFalse = bloqueFalse;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitIf(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If }

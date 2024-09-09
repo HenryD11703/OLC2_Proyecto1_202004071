@@ -11,7 +11,12 @@
       'print': nodos.Print,
       'statement': nodos.Statement,
       'Cadena': nodos.Cadena,
-      'nativo': nodos.Nativo
+      'nativo': nodos.Nativo,
+      'simpleDcl': nodos.DeclaracionSimple,
+      'typeLessDcl': nodos.DeclaracionSinTipo,
+      'asignacion': nodos.Asignacion,
+      'bloque': nodos.Bloque,
+      'if': nodos.If
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -36,25 +41,38 @@
 
 // Ya que es a la que puede llegar directo pasando de uno en uno estas otras producciones
 
-Codigo = dcl:Declaracion* _ { return dcl }
+Codigo = _ dcl:Declaracion* _ { return dcl }
 
 Declaracion = dcl:Variable _ { return dcl }
           /   stmt:Statement _ { return stmt }
- 
-Variable =  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identificador  _ "=" _ exp:Expresion _ ";"{
-  return crearNodo('declaracionVar', { tipo, id, valor:exp})
-}
 
+// Para declarar variables hay distintas maneras
+// la normal de declarar con el tipo, el id y el valor
+// donde solo se declara el tipo y el valor
+// y donde no se da un tipo sino que solo el valor
+Variable = _ tipo:("var") _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('typeLessDcl', { id, valor:exp }) }
+        /  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identificador _ ";"{ return crearNodo('simpleDcl', { tipo, id })}
+        /  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identificador  _ "=" _ exp:Expresion _ ";"{ return crearNodo('declaracionVar', { tipo, id, valor:exp})}
 
 // Statement = "System.out.println(" _ exp:Expresion ")" ";" { return crearNodo('print', {exp})}
 Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return crearNodo('print', {args})}
+          / Bloque:Bloque { return Bloque }
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
+          / ifStmt:IFStmt { return ifStmt }
+
+// esta produccion cubre el if normal, el if else, el if else if else
+IFStmt = "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Statement stmtFalse:( "else" _ stmtFalse:Statement { return stmtFalse } )? { return crearNodo('if', { condicion:cond, bloqueTrue:stmtTrue, bloqueFalse:stmtFalse }) }
+
+Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', {dcls}) }
 
 ArgumentosPrint = arg:Expresion args:("," _ exp:Expresion { return exp })* { return [arg, ...args] }
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
-Expresion = OperacionOr
+Expresion = Asignacion
+
+Asignacion = id:Identificador _ "=" _ exp:Asignacion { return crearNodo('asignacion', { id, exp }) }
+          / OperacionOr 
 
 
 OperacionOr = izq:OperacionAnd expansion:( _ op:("||") _ der: OperacionAnd {return { tipo:op, der}})* {
@@ -143,6 +161,8 @@ Nativo = [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: 
         / "[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
         / id:Identificador { return crearNodo('accesoVar', {id}) }
 
-_ = [ \t\n\r]*
+_ = ([ \t\n\r] / Comments)*
 
+Comments = "//" (![\n] .)*
+            / "/*" (!("*/") .)* "*/"
 

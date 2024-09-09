@@ -1,50 +1,46 @@
 export class Entorno {
-    constructor() {
+    constructor(padre = undefined) {
         this.variables = {};
+        this.padre = padre; // Fix: assign padre to this.padre
     }
 
-    /**
-     * 
-     * @param {string} id 
-     * @param {string} tipo 
-     * @param {any} valor 
-     */
-    agregarVariable(id, tipo, valor) {
-        this.variables[id] = { tipo, valor };
-    }
-
-    /**
-     * 
-     * @param {string} id 
-     * @returns 
-     */
-    obtenerValorVariable(id) {
-        if (this.verificarVariableExiste(id)) {
-            return { tipo: this.variables[id].tipo, valor: this.variables[id].valor };
+    asignarValorVariable(id, valor) {
+        if (this.variables.hasOwnProperty(id)) {
+            this.variables[id].valor = valor;
+        } else if (this.padre) {
+            this.padre.asignarValorVariable(id, valor);
         } else {
-            //si la variable no existe se retorna un objeto con tipo null y valor null
-            console.log(`Error de referencia: variable ${id} no declarada`);
-            return { tipo: null, valor: null };
+            throw new Error(`Error de referencia: variable ${id} no declarada`);
         }
     }
 
-    /**
-     * 
-     * @param {string} id 
-     * @returns 
-     */
-    verificarVariableExiste(id) {
-        return this.variables[id]!== undefined;
-        
+    agregarVariable(id, tipo, valor) {
+        if (this.variables.hasOwnProperty(id)) {
+            throw new Error(`Error: variable ${id} ya declarada en este ámbito`);
+        }
+        this.variables[id] = { tipo, valor };
     }
 
-    /**
+    obtenerValorVariable(id) {
+        if (this.variables.hasOwnProperty(id)) {
+            return { tipo: this.variables[id].tipo, valor: this.variables[id].valor };
+        } else if (this.padre) {
+            return this.padre.obtenerValorVariable(id);
+        } else {
+            return { tipo: null, valor: null }; // Si la variable no existe y no tiene padre
+        }
+    }
 
-     * @param {string} id 
-     * @param {string} tipo 
-     * @returns 
-     */
+    verificarVariableExiste(id) {
+        return this.variables.hasOwnProperty(id) || (this.padre && this.padre.verificarVariableExiste(id));
+    }
+
     verificarVariableTipo(id, tipo) {
-        return this.variables[id]?.tipo === tipo;
+        if (this.variables.hasOwnProperty(id)) {
+            return this.variables[id].tipo === tipo;
+        } else if (this.padre) {
+            return this.padre.verificarVariableTipo(id, tipo);
+        }
+        return false;
     }
 }

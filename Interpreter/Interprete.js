@@ -19,7 +19,7 @@ export class InterpretarVisitor extends BaseVisitor {
         // pero para seguir recorriendo el arbol se retornara como resultado
         // el valor null en la operacion
 
-        if (izq.tipo === null || der.tipo === null) {
+        if (izq.valor === null || der.valor === null) {
             return { tipo: null, valor: null };
         }
 
@@ -53,9 +53,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 } else if (izq.tipo === "string" && der.tipo === "string") {
                     return { tipo: "string", valor: izq.valor + der.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede sumar " + izq.tipo + " con " + der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede sumar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "-":
@@ -74,9 +72,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 } else if (izq.tipo === "float" && der.tipo === "int") {
                     return { tipo: "float", valor: izq.valor - der.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede restar" + izq.tipo + " con" + der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede restar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "*":
@@ -90,12 +86,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 } else if (izq.tipo === "float" && der.tipo === "int") {
                     return { tipo: "float", valor: izq.valor * der.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede multiplicar" +
-                        izq.tipo +
-                        " con" +
-                        der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede multiplicar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "/":
@@ -114,9 +105,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 } else if (izq.tipo === "float" && der.tipo === "int") {
                     return { tipo: "float", valor: izq.valor / der.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede dividir" + izq.tipo + " con" + der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede dividir ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "||":
@@ -130,12 +119,7 @@ export class InterpretarVisitor extends BaseVisitor {
                         valor: Boolean(izq.valor) || Boolean(der.valor),
                     };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede hacer la operacion OR entre" +
-                        izq.tipo +
-                        " y " +
-                        der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede hacer la operacion OR entre ${izq.tipo} y ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "&&":
@@ -148,12 +132,7 @@ export class InterpretarVisitor extends BaseVisitor {
                         valor: Boolean(izq.valor) && Boolean(der.valor),
                     };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede hacer la operacion AND entre" +
-                        izq.tipo +
-                        " y " +
-                        der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede hacer la operacion AND entre ${izq.tipo} y ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "==":
@@ -184,12 +163,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 } else if (izq.tipo === "char" && der.tipo === "char") {
                     return { tipo: "boolean", valor: izq.valor === der.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede comparar" +
-                        izq.tipo +
-                        " con" +
-                        der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "!=":
@@ -212,12 +186,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 } else if (izq.tipo === "char" && der.tipo === "char") {
                     return { tipo: "boolean", valor: izq.valor !== der.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede comparar" +
-                        izq.tipo +
-                        " con" +
-                        der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case ">":
@@ -230,9 +199,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 ) {
                     return { tipo: "boolean", valor: izq.valor > der.valor };
                 } else {
-                    console.log(
-                        `Error: Comparación inválida entre ${izq.tipo} y ${der.tipo}`
-                    );
+                    this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "<":
@@ -245,9 +212,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 ) {
                     return { tipo: "boolean", valor: izq.valor < der.valor };
                 } else {
-                    console.log(
-                        `Error: Comparación inválida entre ${izq.tipo} y ${der.tipo}`
-                    );
+                    this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case ">=":
@@ -260,9 +225,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 ) {
                     return { tipo: "boolean", valor: izq.valor >= der.valor };
                 } else {
-                    console.log(
-                        `Error: Comparación inválida entre ${izq.tipo} y ${der.tipo}`
-                    );
+                    this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "<=":
@@ -275,9 +238,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 ) {
                     return { tipo: "boolean", valor: izq.valor <= der.valor };
                 } else {
-                    console.log(
-                        `Error: Comparación inválida entre ${izq.tipo} y ${der.tipo}`
-                    );
+                    this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "%":
@@ -285,16 +246,11 @@ export class InterpretarVisitor extends BaseVisitor {
                 if (izq.tipo === "int" && der.tipo === "int") {
                     return { tipo: "int", valor: izq.valor % der.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede calcular el modulo entre" +
-                        izq.tipo +
-                        " y" +
-                        der.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede hacer modulo entre ${izq.tipo} y ${der.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             default:
-                throw new Error(`Operador ${node.operacion} no soportado`);
+                this.consola += `Error de tipos: operador ${node.op} no soportado\n`;
         }
     }
 
@@ -319,9 +275,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 } else if (exp.tipo === "float") {
                     return { tipo: "float", valor: -exp.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede hacer negacion a " + exp.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede hacer negativo a ${exp.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             case "!":
@@ -332,9 +286,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 if (exp.tipo === "boolean") {
                     return { tipo: "boolean", valor: !exp.valor };
                 } else {
-                    console.log(
-                        "Error de tipos: no se puede hacer negacion a " + exp.tipo
-                    );
+                    this.consola += `Error de tipos: no se puede hacer negacion a ${exp.tipo}\n`;
                     return { tipo: null, valor: null };
                 }
             default:
@@ -371,23 +323,23 @@ export class InterpretarVisitor extends BaseVisitor {
         const nombre = node.id;
         const valor = node.valor.accept(this);
 
-        //Verificar los tipos de valor y de tipo
-        //tipo es la parte de la gramatica y valor.tipo seria el tipo verdadero del dato
+        // Verificar los tipos de valor y de tipo
+        // tipo es la parte de la gramática y valor.tipo sería el tipo verdadero del dato
+        // en tipo es int, float, string, boolean, char
 
-        //en tipo es int, float, string, boolean char
-
-        if (tipo !== valor.tipo) {
-            console.log(`Error de tipos: ${tipo} no es ${valor.tipo}`);
-            //Si es un error no se para aca sino que se retorna null o
-            //tambien se puede asignar a la variable dada el null para que
-            //el arbol se siga recorriendo y cualquier otra operacion que involucre
-            //a esta variable tenga como resultado null
+        // Conversión implícita de int a float
+        if (tipo === 'float' && valor.tipo === 'int') {
+            this.entornoActual.agregarVariable(nombre, tipo, parseFloat(valor.valor));
+        } else if (tipo !== valor.tipo) {
+            this.consola += `Error de tipos: no se puede asignar ${valor.tipo} a ${tipo}\n`;
+            // Si es un error, se asigna null a la variable para que
+            // el árbol se siga recorriendo y cualquier otra operación que involucre
+            // a esta variable tenga como resultado null
             this.entornoActual.agregarVariable(nombre, null, null);
+        } else {
+            this.entornoActual.agregarVariable(nombre, tipo, valor.valor);
         }
-
-        this.entornoActual.agregarVariable(nombre, tipo, valor.valor);
     }
-
     /**
      * @type {BaseVisitor['visitReferenciaVariable']}
      */
@@ -395,9 +347,9 @@ export class InterpretarVisitor extends BaseVisitor {
         const nombre = node.id;
         const nativo = this.entornoActual.obtenerValorVariable(nombre);
         // nativo es un objeto { tipo: string, valor: any }
-        if (nativo === undefined) {
-            console.log(`Error de referencia: variable ${nombre} no declarada`);
-            return new Nativo({ tipo: "null", valor: null });
+        if (nativo.tipo === null) {
+            this.consola += `Error: variable ${nombre} no declarada\n`;
+            return { tipo: null, valor: null };
         }
         return nativo;
     }
@@ -436,5 +388,105 @@ export class InterpretarVisitor extends BaseVisitor {
         const valor = node.valor;
         const tipo = node.tipo;
         return { tipo, valor };
+    }
+
+    /**
+     * @type {BaseVisitor['visitDeclaracionSimple']}
+     */
+    visitDeclaracionSimple(node) {
+        const tipo = node.tipo;
+        const nombre = node.id;
+        // Esta forma de declaracion no cuenta con valor por lo que se le asignara uno por defecto
+        let valor;
+        switch (tipo) {
+            case "int":
+                valor = 0;
+                break;
+            case "float":
+                valor = 0.0;
+                break;
+            case "string":
+                valor = "";
+                break;
+            case "boolean":
+                valor = true;
+                break;
+            case "char":
+                valor = "";
+                break;
+            default:
+                this.consola += `Error de tipos: tipo ${tipo} no soportado\n`;
+        }
+
+        this.entornoActual.agregarVariable(nombre, tipo, valor);
+    }
+
+    /**
+     * @type {BaseVisitor['visitDeclaracionSinTipo']}
+     */
+    visitDeclaracionSinTipo(node) {
+        // ver si la exp es null y asignar null para seguir recorriendo el arbol
+        const nombre = node.id;
+        const valor = node.valor.accept(this);
+
+        if (valor.valor === null) {
+            this.entornoActual.agregarVariable(nombre, null, null);
+        }   
+        // esto es facil en si por que el valor es decir el nativo ya trae el tipo que queremos
+        this.entornoActual.agregarVariable(nombre, valor.tipo, valor.valor);
+    }
+
+    /**
+     * @type {BaseVisitor['visitAsignacion']}
+     */
+    visitAsignacion(node) {
+        const nombre = node.id;
+        const exp = node.exp.accept(this);
+
+        //Hacer la verificacion de que el exp.tipo sean del mismo tipo que el de la variable
+
+        // si exp es null asignar ese valor
+        if (exp.tipo === null) {
+            this.entornoActual.asignarValorVariable(nombre, null);
+            return { tipo: null, valor: null };
+        }
+        if (this.entornoActual.verificarVariableTipo(nombre, exp.tipo)) {
+            this.entornoActual.asignarValorVariable(nombre, exp.valor);
+        } else {
+            // asignar null
+            this.consola += `Error de tipos: no se puede asignar ${exp.tipo} a ${nombre}\n`;
+            this.entornoActual.asignarValorVariable(nombre, null);
+        }
+    }
+
+    /**
+     * @type {BaseVisitor['visitBloque']}
+     */
+    visitBloque(node) {
+        const entornoAnterior = this.entornoActual;
+        this.entornoActual = new Entorno(entornoAnterior);
+
+        node.dcls.forEach((dcl) => dcl.accept(this));
+        
+        this.entornoActual = entornoAnterior;
+    }
+
+    /**
+     * @type {BaseVisitor['visitIf']}
+     */
+    visitIf(node) {
+        const condicion = node.condicion.accept(this);
+        // verificar si la condicion es booleana, sino reportar el error
+        if (condicion.tipo !== "boolean") {
+            this.consola += `Error de tipos: la condicion debe ser booleana\n`;
+            return;
+        }
+        if (condicion.valor) {
+            node.bloqueTrue.accept(this);
+            return; // Si la sentencia es true ya no se hace nada mas y solo se evalua el bloque
+        }
+        if (node.bloqueFalse) {
+            node.bloqueFalse.accept(this);
+        }
     }
 }
