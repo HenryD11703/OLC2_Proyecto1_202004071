@@ -45,6 +45,12 @@
 
  * @typedef {import('./nodos').If} If
 
+
+ * @typedef {import('./nodos').Ternary} Ternary
+
+
+ * @typedef {import('./nodos').While} While
+
  */
 
 
@@ -187,6 +193,24 @@ export class BaseVisitor {
      */
     visitIf(node) {
         throw new Error('Metodo visitIf no implementado');
+    }
+    
+
+    /**
+     * @param {Ternary} node
+     * @returns {any}
+     */
+    visitTernary(node) {
+        throw new Error('Metodo visitTernary no implementado');
+    }
+    
+
+    /**
+     * @param {While} node
+     * @returns {any}
+     */
+    visitWhile(node) {
+        throw new Error('Metodo visitWhile no implementado');
     }
     
 }

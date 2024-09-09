@@ -16,7 +16,9 @@
       'typeLessDcl': nodos.DeclaracionSinTipo,
       'asignacion': nodos.Asignacion,
       'bloque': nodos.Bloque,
-      'if': nodos.If
+      'if': nodos.If,
+      'ternario': nodos.Ternary,
+      'while': nodos.While
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -59,20 +61,40 @@ Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return cr
           / Bloque:Bloque { return Bloque }
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
           / ifStmt:IFStmt { return ifStmt }
+          / whileStmt:WhileStmt { return whileStmt }
+
+WhileStmt = "while" _ "(" _ cond:Expresion _ ")" _ stmt:Statement { return crearNodo('while', { condicion:cond, bloque:stmt }) }
 
 // esta produccion cubre el if normal, el if else, el if else if else
-IFStmt = "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Statement stmtFalse:( "else" _ stmtFalse:Statement { return stmtFalse } )? { return crearNodo('if', { condicion:cond, bloqueTrue:stmtTrue, bloqueFalse:stmtFalse }) }
+IFStmt = "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Statement stmtFalse:( _ "else" _ stmtFalse:Statement { return stmtFalse } )? { return crearNodo('if', { condicion:cond, bloqueTrue:stmtTrue, bloqueFalse:stmtFalse }) }
 
 Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', {dcls}) }
 
-ArgumentosPrint = arg:Expresion args:("," _ exp:Expresion { return exp })* { return [arg, ...args] }
+ArgumentosPrint = arg:Expresion args:( _ "," _ exp:Expresion { return exp })* { return [arg, ...args] }
 
-Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
+Identificador = [a-zA-Z_][a-zA-Z0-9_]* { return text() }
 
 Expresion = Asignacion
 
-Asignacion = id:Identificador _ "=" _ exp:Asignacion { return crearNodo('asignacion', { id, exp }) }
-          / OperacionOr 
+Asignacion = id:Identificador _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
+  if (op === "+=") {
+    return crearNodo('asignacion', { 
+      id, 
+      exp: crearNodo('binaria', { op: '+', izq: crearNodo('accesoVar', {id}), der: exp })
+    })
+  } else if (op === "-=") {
+    return crearNodo('asignacion', { 
+      id, 
+      exp: crearNodo('binaria', { op: '-', izq: crearNodo('accesoVar', {id}), der: exp })
+    })
+  } else {
+    return crearNodo('asignacion', { id, exp })
+  }
+}
+          / TernaryOp
+
+TernaryOp = cond:OperacionOr _ "?" _ expTrue:Expresion _ ":" _ expFalse:Expresion { return crearNodo('ternario', { condicion:cond, expTrue, expFalse }) }
+          / OperacionOr
 
 
 OperacionOr = izq:OperacionAnd expansion:( _ op:("||") _ der: OperacionAnd {return { tipo:op, der}})* {
@@ -155,6 +177,7 @@ Nativo = [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: 
         / [0-9]+ { return crearNodo('nativo', { tipo: 'int', valor: parseInt(text(), 10) }) }
         / "true" { return crearNodo('nativo', { tipo: 'boolean', valor: true }) }
         / "false" { return crearNodo('nativo', { tipo: 'boolean', valor: false }) }
+        / "null" { return crearNodo('nativo', { tipo: 'null', valor: null }) }
         / '"' ([^"\\] / "\\" .)* '"' { return crearNodo('nativo', { tipo: 'string', valor: JSON.parse(text()) }) }
         / "'" . "'" { return crearNodo('nativo', { tipo: 'char', valor: text().charAt(1) }) }
         / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }

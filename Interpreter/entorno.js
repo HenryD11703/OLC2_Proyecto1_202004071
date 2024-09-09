@@ -15,9 +15,6 @@ export class Entorno {
     }
 
     agregarVariable(id, tipo, valor) {
-        if (this.variables.hasOwnProperty(id)) {
-            throw new Error(`Error: variable ${id} ya declarada en este ámbito`);
-        }
         this.variables[id] = { tipo, valor };
     }
 

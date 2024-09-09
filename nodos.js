@@ -479,4 +479,78 @@ export class If extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If }
+export class Ternary extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.condicion Expresion que debe ser verdadera para ejecutar el bloque if
+ * @param {Expresion} options.expTrue Expresion a retornar si la condicion es verdadera
+ * @param {Expresion} options.expFalse Expresion a retornar si la condicion es falsa
+    */
+    constructor({ condicion, expTrue, expFalse }) {
+        super();
+        
+        /**
+         * Expresion que debe ser verdadera para ejecutar el bloque if
+         * @type {Expresion}
+        */
+        this.condicion = condicion;
+
+
+        /**
+         * Expresion a retornar si la condicion es verdadera
+         * @type {Expresion}
+        */
+        this.expTrue = expTrue;
+
+
+        /**
+         * Expresion a retornar si la condicion es falsa
+         * @type {Expresion}
+        */
+        this.expFalse = expFalse;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitTernary(this);
+    }
+}
+    
+export class While extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.condicion Expresion que debe ser verdadera para ejecutar el bloque while
+ * @param {Expresion} options.bloque Bloque de codigo a ejecutar mientras la condicion sea verdadera
+    */
+    constructor({ condicion, bloque }) {
+        super();
+        
+        /**
+         * Expresion que debe ser verdadera para ejecutar el bloque while
+         * @type {Expresion}
+        */
+        this.condicion = condicion;
+
+
+        /**
+         * Bloque de codigo a ejecutar mientras la condicion sea verdadera
+         * @type {Expresion}
+        */
+        this.bloque = bloque;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitWhile(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While }

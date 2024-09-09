@@ -92,7 +92,7 @@ export class InterpretarVisitor extends BaseVisitor {
             case "/":
                 // se debe verificar que no se divida entre 0
                 if (der.valor === 0) {
-                    console.log("Error aritmetico: division entre 0");
+                    this.consola += `Error: no se pueden hacer divisiones entre 0\n`;
                     return { tipo: null, valor: null };
                 }
                 // se hara lo mismo que en la resta y multiplicacion
@@ -452,10 +452,12 @@ export class InterpretarVisitor extends BaseVisitor {
         }
         if (this.entornoActual.verificarVariableTipo(nombre, exp.tipo)) {
             this.entornoActual.asignarValorVariable(nombre, exp.valor);
+            return { tipo: exp.tipo, valor: exp.valor };
         } else {
             // asignar null
             this.consola += `Error de tipos: no se puede asignar ${exp.tipo} a ${nombre}\n`;
             this.entornoActual.asignarValorVariable(nombre, null);
+            return { tipo: null, valor: null };
         }
     }
 
@@ -487,6 +489,38 @@ export class InterpretarVisitor extends BaseVisitor {
         }
         if (node.bloqueFalse) {
             node.bloqueFalse.accept(this);
+        }
+    }
+
+    /**
+     * @type {BaseVisitor['visitTernary']}
+     */
+    visitTernary(node) {
+        const condicion = node.condicion.accept(this);
+        // verificar si la condicion es booleana, sino reportar el error
+        if (condicion.tipo!== "boolean") {
+            this.consola += `Error de tipos: la condicion de la operacion ternaria debe ser booleana\n`;
+            return { tipo: null, valor: null };
+        }
+        if (condicion.valor) {
+            // si la expresion es verdadera se interpretara y se retornara el expTrue
+            let expTrue = node.expTrue.accept(this);
+            return { tipo: expTrue.tipo, valor: expTrue.valor };
+        } else {
+            // si la expresion es falsa se interpretara y se retornara el expFalse
+            let expFalse = node.expFalse.accept(this);
+            return { tipo: expFalse.tipo, valor: expFalse.valor };
+        }
+            
+    }
+
+    /**
+     * @type {BaseVisitor['visitWhile']}
+     */
+    visitWhile(node) {
+        // Mientras la condicion sea verdadera se ejecuta el bloque
+        while (node.condicion.accept(this).valor) {
+            node.bloque.accept(this);
         }
     }
 }
