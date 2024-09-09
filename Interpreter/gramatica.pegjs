@@ -18,7 +18,8 @@
       'bloque': nodos.Bloque,
       'if': nodos.If,
       'ternario': nodos.Ternary,
-      'while': nodos.While
+      'while': nodos.While,
+      'for': nodos.For
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -62,6 +63,13 @@ Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return cr
           / exp:Expresion ";" { return crearNodo('statement', {exp})}
           / ifStmt:IFStmt { return ifStmt }
           / whileStmt:WhileStmt { return whileStmt }
+          / forStmt:ForStmt { return forStmt }
+
+ForStmt = "for" _ "(" _ init:InitFor _  _ cond:Expresion _ ";" _ inc:Expresion _ ")" _ stmt:Statement { return crearNodo('for', { inicial:init, condicion:cond, incremento:inc, bloque:stmt }) }
+
+InitFor = dcl:Variable { return dcl }
+        / exp:Expresion ";" { return exp }
+        / ";" { return null } // Para validar asi como en lenguajes como js donde no es necesario que se declare algo en el for
 
 WhileStmt = "while" _ "(" _ cond:Expresion _ ")" _ stmt:Statement { return crearNodo('while', { condicion:cond, bloque:stmt }) }
 

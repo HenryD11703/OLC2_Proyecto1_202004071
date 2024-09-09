@@ -1,11 +1,15 @@
 import { BaseVisitor } from "../visitor.js";
 import { Entorno } from "./entorno.js";
+import nodos, { Expresion } from '../nodos.js';
 
 export class InterpretarVisitor extends BaseVisitor {
     constructor() {
         super();
         this.entornoActual = new Entorno(); //Entorno Padre
         this.consola = ""; // Cadena para imprimir en la consola
+
+        this.continuePrevio = null; // para manejar el continue en las funciones
+
     }
     /**
      * @type {BaseVisitor['visitOperacionBinaria']}
@@ -522,5 +526,42 @@ export class InterpretarVisitor extends BaseVisitor {
         while (node.condicion.accept(this).valor) {
             node.bloque.accept(this);
         }
+    }
+
+    /**
+     * @type {BaseVisitor['visitFor']}
+     */
+    visitFor(node) {
+        const AnteriorIncrement = this.continuePrevio;
+        this.continuePrevio = node.incremento;
+ // La idea aca es basicamente hacer un nodo while traduciendo el for a su estructura
+            /*
+            Por ejemplo: 
+            for (var i=0; i<10; i=i+1) print i;
+                Se traduce a:
+                {
+                    var i = 0;
+                    while(i<10){
+                        print i;
+                        i= i + 1;
+                    }
+                }
+            */
+        const funcFor = new nodos.Bloque({
+           dcls: [
+                node.inicial,
+                new nodos.While({
+                    condicion: node.condicion,
+                    bloque: new nodos.Bloque({
+                        dcls: [
+                            node.bloque,
+                            node.incremento
+                        ]
+                    })
+                })
+           ]
+        })
+        funcFor.accept(this);
+        this.continuePrevio = AnteriorIncrement;
     }
 }

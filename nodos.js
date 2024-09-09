@@ -553,4 +553,53 @@ export class While extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While }
+export class For extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.inicial Expresion que inicializa el contador
+ * @param {Expresion} options.condicion Expresion que debe ser verdadera para ejecutar el bloque for
+ * @param {Expresion} options.incremento Expresion que se ejecuta despues de cada iteracion
+ * @param {Expresion} options.bloque Bloque de codigo a ejecutar en cada iteracion
+    */
+    constructor({ inicial, condicion, incremento, bloque }) {
+        super();
+        
+        /**
+         * Expresion que inicializa el contador
+         * @type {Expresion}
+        */
+        this.inicial = inicial;
+
+
+        /**
+         * Expresion que debe ser verdadera para ejecutar el bloque for
+         * @type {Expresion}
+        */
+        this.condicion = condicion;
+
+
+        /**
+         * Expresion que se ejecuta despues de cada iteracion
+         * @type {Expresion}
+        */
+        this.incremento = incremento;
+
+
+        /**
+         * Bloque de codigo a ejecutar en cada iteracion
+         * @type {Expresion}
+        */
+        this.bloque = bloque;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitFor(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For }
