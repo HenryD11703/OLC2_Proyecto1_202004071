@@ -602,4 +602,64 @@ export class For extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For }
+export class Switch extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.exp Expresion que selecciona la seccion del switch
+ * @param {Expresion[]} options.cases Casos del switch
+ * @param {Expresion|null} options.def Bloque de codigo a ejecutar si no se encuentra ningun caso coincidente
+    */
+    constructor({ exp, cases, def }) {
+        super();
+        
+        /**
+         * Expresion que selecciona la seccion del switch
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+
+        /**
+         * Casos del switch
+         * @type {Expresion[]}
+        */
+        this.cases = cases;
+
+
+        /**
+         * Bloque de codigo a ejecutar si no se encuentra ningun caso coincidente
+         * @type {Expresion|null}
+        */
+        this.def = def;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitSwitch(this);
+    }
+}
+    
+export class Break extends Expresion {
+
+    /**
+    * @param {Object} options
+    * 
+    */
+    constructor({  }) {
+        super();
+        
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitBreak(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break }

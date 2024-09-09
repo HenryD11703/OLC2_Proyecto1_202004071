@@ -19,7 +19,9 @@
       'if': nodos.If,
       'ternario': nodos.Ternary,
       'while': nodos.While,
-      'for': nodos.For
+      'for': nodos.For,
+      'switch': nodos.Switch,
+      'break': nodos.Break
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -64,6 +66,14 @@ Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return cr
           / ifStmt:IFStmt { return ifStmt }
           / whileStmt:WhileStmt { return whileStmt }
           / forStmt:ForStmt { return forStmt }
+          / swtch:SwtchStmt { return swtch }
+          / "break" _ ";" { return crearNodo('break') }
+
+SwtchStmt = "switch" _ "(" _ exp:Expresion _ ")" _ "{" 
+            _ cases:( _ "case" _ cond:Expresion _ ":" _ caseStmt:Statement* { return {cond, bloque: crearNodo('bloque', {dcls: caseStmt})} })*
+            _ def:( _ "default" _ ":" _ defStmt:Statement* { return crearNodo('bloque', {dcls: defStmt}) } )?
+            _ "}"
+            { return crearNodo('switch', {exp, cases, def: def || null}) }
 
 ForStmt = "for" _ "(" _ init:InitFor _  _ cond:Expresion _ ";" _ inc:Expresion _ ")" _ stmt:Statement { return crearNodo('for', { inicial:init, condicion:cond, incremento:inc, bloque:stmt }) }
 

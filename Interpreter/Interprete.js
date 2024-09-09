@@ -1,6 +1,7 @@
 import { BaseVisitor } from "../visitor.js";
 import { Entorno } from "./entorno.js";
 import nodos, { Expresion } from '../nodos.js';
+import { BreakException } from "./sntcTansferencia.js";
 
 export class InterpretarVisitor extends BaseVisitor {
     constructor() {
@@ -522,9 +523,19 @@ export class InterpretarVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitWhile']}
      */
     visitWhile(node) {
-        // Mientras la condicion sea verdadera se ejecuta el bloque
-        while (node.condicion.accept(this).valor) {
-            node.bloque.accept(this);
+        const EntornoActual = this.entornoActual;
+
+        try {
+            // Mientras la condicion sea verdadera se ejecuta el bloque
+            while (node.condicion.accept(this).valor) {
+                node.bloque.accept(this);
+            }
+        } catch (error) {
+            this.entornoActual = EntornoActual;
+
+            if (error instanceof BreakException) {
+                return;
+            } // aca poner el continue tambien
         }
     }
 
@@ -563,5 +574,54 @@ export class InterpretarVisitor extends BaseVisitor {
         })
         funcFor.accept(this);
         this.continuePrevio = AnteriorIncrement;
+    }
+
+    /**
+     * @type {BaseVisitor['visitBreak']}
+     */
+    visitBreak(node) {
+        throw new BreakException();
+    }
+
+    /**
+     * @type {BaseVisitor['visitSwitch']}
+     */
+    visitSwitch(node) {
+        const expValue = node.exp.accept(this);
+    
+        if (expValue.valor === null) {
+            this.consola += "Error: La expresión del switch es inválida.\n";
+            return;
+        }
+    
+        let matched = false;
+    
+        try {
+            for (const caseNode of node.cases) {
+                const caseValue = caseNode.cond.accept(this);
+    
+                if (caseValue.valor === null) {
+                    this.consola += "Error: La condición del case es inválida.\n";
+                    continue;
+                }
+    
+                if (expValue.valor === caseValue.valor) {
+                    matched = true;
+                    caseNode.bloque.accept(this);
+                    // No break here, to allow fall-through
+                }
+            }
+    
+            if (!matched && node.def) {
+                node.def.accept(this);
+            }
+        } catch (error) {
+            if (error instanceof BreakException) {
+                // Break encountered, exit the switch
+            } else {
+                // Re-throw any other errors
+                throw error;
+            }
+        }
     }
 }
