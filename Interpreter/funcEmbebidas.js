@@ -8,8 +8,8 @@ class FuncionesNativas extends LlamadaFunc {
     }
 }
 
-//System.out.println(time());
+// System.out.println(time());
 export const embebidas = {
     // recordar que cada cosa debe retornar un par de tipo y valor
-    'time': new FuncionNativa(() => 0, () => { return { tipo: 'string', valor: Date.now() } }),
+    'time': new FuncionesNativas(() => 0, () => new Date().toISOString())
 }

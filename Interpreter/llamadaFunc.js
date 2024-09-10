@@ -10,6 +10,11 @@ export class LlamadaFunc {
         throw new Error('No implementado');
     }
 
+    /**
+     * 
+     * @param {InterpretarVisitor} interprete 
+     * @param {any[]} args 
+     */
     invocar(interprete, args){
         throw new Error('No implementado');
     }

@@ -1,6 +1,6 @@
 import { BaseVisitor } from "../visitor.js";
 import { Entorno } from "./entorno.js";
-import nodos, { Expresion } from '../nodos.js';
+import nodos, { Expresion, Llamada } from '../nodos.js';
 import { BreakException, ContinueException, ReturnException } from "./sntcTansferencia.js";
 import { LlamadaFunc } from "./llamadaFunc.js";
 
@@ -676,21 +676,15 @@ export class InterpretarVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitLlamada']}
      */
     visitLlamada(node) {
-        const callee = node.callee.accept(this);
-
+        const funcion = node.callee.accept(this);
         const argumentos = node.args.map((arg) => arg.accept(this));
 
-        if ( !( callee instanceof LlamadaFunc ) ) {
-            this.consola += `Error: ${node.callee} no es una función\n`;
-            return { tipo: null, valor: null };
-        }
+        console.log("Funcion: ", funcion);
+        console.log("Argumentos: ", argumentos);
 
-        if ( callee.aridad !== argumentos.length ) {
-            this.consola += `Error: La función ${callee.id} esperaba ${callee.aridad} argumentos, pero se pasaron ${argumentos.length}\n`;
-            return { tipo: null, valor: null };
+        if(!(funcion instanceof LlamadaFunc)){
+            throw new Error('No se puede llamar a un objeto que no sea una función');
         }
-
-        return callee.invocar(argumentos);
     }
 
 }
