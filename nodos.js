@@ -608,7 +608,7 @@ export class Switch extends Expresion {
     * @param {Object} options
     * @param {Expresion} options.exp Expresion que selecciona la seccion del switch
  * @param {Expresion[]} options.cases Casos del switch
- * @param {Expresion|null} options.def Bloque de codigo a ejecutar si no se encuentra ningun caso coincidente
+ * @param {Expresion[]|null} options.def Bloque de codigo a ejecutar si no se encuentra ningun caso coincidente
     */
     constructor({ exp, cases, def }) {
         super();
@@ -629,7 +629,7 @@ export class Switch extends Expresion {
 
         /**
          * Bloque de codigo a ejecutar si no se encuentra ningun caso coincidente
-         * @type {Expresion|null}
+         * @type {Expresion[]|null}
         */
         this.def = def;
 
@@ -649,7 +649,7 @@ export class Break extends Expresion {
     * @param {Object} options
     * 
     */
-    constructor({  }) {
+    constructor() {
         super();
         
     }
@@ -662,4 +662,81 @@ export class Break extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break }
+export class Continue extends Expresion {
+
+    /**
+    * @param {Object} options
+    * 
+    */
+    constructor() {
+        super();
+        
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitContinue(this);
+    }
+}
+    
+export class Return extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion|null} options.exp Expresion que se retorna
+    */
+    constructor({ exp }) {
+        super();
+        
+        /**
+         * Expresion que se retorna
+         * @type {Expresion|null}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitReturn(this);
+    }
+}
+    
+export class Llamada extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.callee Expresion que llama a la funcion
+ * @param {Expresion[]} options.args Argumentos a pasar a la funcion
+    */
+    constructor({ callee, args }) {
+        super();
+        
+        /**
+         * Expresion que llama a la funcion
+         * @type {Expresion}
+        */
+        this.callee = callee;
+
+
+        /**
+         * Argumentos a pasar a la funcion
+         * @type {Expresion[]}
+        */
+        this.args = args;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitLlamada(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada }

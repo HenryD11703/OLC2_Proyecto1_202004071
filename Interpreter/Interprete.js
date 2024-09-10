@@ -1,7 +1,8 @@
 import { BaseVisitor } from "../visitor.js";
 import { Entorno } from "./entorno.js";
 import nodos, { Expresion } from '../nodos.js';
-import { BreakException } from "./sntcTansferencia.js";
+import { BreakException, ContinueException, ReturnException } from "./sntcTansferencia.js";
+import { LlamadaFunc } from "./llamadaFunc.js";
 
 export class InterpretarVisitor extends BaseVisitor {
     constructor() {
@@ -535,7 +536,11 @@ export class InterpretarVisitor extends BaseVisitor {
 
             if (error instanceof BreakException) {
                 return;
-            } // aca poner el continue tambien
+            } else if (error instanceof ContinueException) {
+                return this.visitWhile(node);
+            }
+
+            throw error;
         }
     }
 
@@ -587,41 +592,105 @@ export class InterpretarVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitSwitch']}
      */
     visitSwitch(node) {
-        const expValue = node.exp.accept(this);
-    
-        if (expValue.valor === null) {
-            this.consola += "Error: La expresión del switch es inválida.\n";
+        const switchValue = node.exp.accept(this);
+        
+        if (switchValue.tipo === null) {
+            this.consola += `Error: Invalid switch expression\n`;
             return;
         }
-    
+        
         let matched = false;
-    
-        try {
-            for (const caseNode of node.cases) {
-                const caseValue = caseNode.cond.accept(this);
-    
-                if (caseValue.valor === null) {
-                    this.consola += "Error: La condición del case es inválida.\n";
+        let executeNext = false;
+        
+        for (const caseNode of node.cases) {
+            if (!matched && !executeNext) {
+                const caseValue = caseNode.valor.accept(this);
+                
+                if (caseValue.tipo === null) {
+                    this.consola += `Error: Invalid case expression\n`;
                     continue;
                 }
-    
-                if (expValue.valor === caseValue.valor) {
+            
+                if (switchValue.valor === caseValue.valor) {
                     matched = true;
-                    caseNode.bloque.accept(this);
-                    // No break here, to allow fall-through
+                    executeNext = true;
                 }
             }
-    
-            if (!matched && node.def) {
-                node.def.accept(this);
+            
+            if (executeNext) {
+                for (const stmt of caseNode.stmts) {
+                    try {
+                        stmt.accept(this);
+                    } catch (e) {
+                        if (e instanceof BreakException) {
+                            return;
+                        }
+                        throw e;
+                    }
+                }
+                // If there's no break, continue to the next case
+                if (caseNode.stmts.some(stmt => stmt instanceof nodos.Break)) {
+                    return;
+                }
             }
-        } catch (error) {
-            if (error instanceof BreakException) {
-                // Break encountered, exit the switch
-            } else {
-                // Re-throw any other errors
-                throw error;
+        }
+        
+        // Handle default case if no break was encountered
+        if (executeNext && node.def) {
+            for (const stmt of node.def.stmts) {
+                try {
+                    stmt.accept(this);
+                } catch (e) {
+                    if (e instanceof BreakException) {
+                        return;
+                    }
+                    throw e;
+                }
             }
         }
     }
+
+    /**
+     * @type {BaseVisitor['visitContinue']}
+     */
+    visitContinue(node) {
+        if (this.continuePrevio) {
+            this.continuePrevio.accept(this);
+        }
+
+        throw new ContinueException();
+    }
+
+    /**
+     * @type {BaseVisitor['visitReturn']}
+     */
+    visitReturn(node) {
+       let valor = null;
+       if (node.exp) {
+        valor = node.exp.accept(this);
+       } 
+       throw new ReturnException(valor);
+    }
+
+    /**
+     * @type {BaseVisitor['visitLlamada']}
+     */
+    visitLlamada(node) {
+        const callee = node.callee.accept(this);
+
+        const argumentos = node.args.map((arg) => arg.accept(this));
+
+        if ( !( callee instanceof LlamadaFunc ) ) {
+            this.consola += `Error: ${node.callee} no es una función\n`;
+            return { tipo: null, valor: null };
+        }
+
+        if ( callee.aridad !== argumentos.length ) {
+            this.consola += `Error: La función ${callee.id} esperaba ${callee.aridad} argumentos, pero se pasaron ${argumentos.length}\n`;
+            return { tipo: null, valor: null };
+        }
+
+        return callee.invocar(argumentos);
+    }
+
 }

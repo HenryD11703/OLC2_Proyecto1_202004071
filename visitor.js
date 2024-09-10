@@ -60,6 +60,15 @@
 
  * @typedef {import('./nodos').Break} Break
 
+
+ * @typedef {import('./nodos').Continue} Continue
+
+
+ * @typedef {import('./nodos').Return} Return
+
+
+ * @typedef {import('./nodos').Llamada} Llamada
+
  */
 
 
@@ -247,6 +256,33 @@ export class BaseVisitor {
      */
     visitBreak(node) {
         throw new Error('Metodo visitBreak no implementado');
+    }
+    
+
+    /**
+     * @param {Continue} node
+     * @returns {any}
+     */
+    visitContinue(node) {
+        throw new Error('Metodo visitContinue no implementado');
+    }
+    
+
+    /**
+     * @param {Return} node
+     * @returns {any}
+     */
+    visitReturn(node) {
+        throw new Error('Metodo visitReturn no implementado');
+    }
+    
+
+    /**
+     * @param {Llamada} node
+     * @returns {any}
+     */
+    visitLlamada(node) {
+        throw new Error('Metodo visitLlamada no implementado');
     }
     
 }

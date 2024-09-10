@@ -21,7 +21,10 @@
       'while': nodos.While,
       'for': nodos.For,
       'switch': nodos.Switch,
-      'break': nodos.Break
+      'break': nodos.Break,
+      'continue': nodos.Continue,
+      'return': nodos.Return,
+      'llamada': nodos.Llamada
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -62,18 +65,23 @@ Variable = _ tipo:("var") _ id:Identificador _ "=" _ exp:Expresion _ ";" { retur
 // Statement = "System.out.println(" _ exp:Expresion ")" ";" { return crearNodo('print', {exp})}
 Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return crearNodo('print', {args})}
           / Bloque:Bloque { return Bloque }
-          / exp:Expresion ";" { return crearNodo('statement', {exp})}
           / ifStmt:IFStmt { return ifStmt }
           / whileStmt:WhileStmt { return whileStmt }
           / forStmt:ForStmt { return forStmt }
           / swtch:SwtchStmt { return swtch }
           / "break" _ ";" { return crearNodo('break') }
+          / "continue" _ ";" { return crearNodo('continue') }
+          / "return" _ exp:Expresion? _ ";" { return crearNodo('return', {exp}) }
+          / exp:Expresion ";" { return crearNodo('statement', {exp})}
 
-SwtchStmt = "switch" _ "(" _ exp:Expresion _ ")" _ "{" 
-            _ cases:( _ "case" _ cond:Expresion _ ":" _ caseStmt:Statement* { return {cond, bloque: crearNodo('bloque', {dcls: caseStmt})} })*
-            _ def:( _ "default" _ ":" _ defStmt:Statement* { return crearNodo('bloque', {dcls: defStmt}) } )?
-            _ "}"
-            { return crearNodo('switch', {exp, cases, def: def || null}) }
+SwtchStmt = "switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:Case* _ defaultC:Default? _ "}" 
+    { return crearNodo('switch', { exp, cases, def:defaultC }) }
+
+Case = "case" _ valor:Expresion _ ":" _ stmts:Declaracion* 
+    { return { valor, stmts } }
+
+Default = "default" _ ":" _ stmts:Declaracion* 
+    { return { stmts } }
 
 ForStmt = "for" _ "(" _ init:InitFor _  _ cond:Expresion _ ";" _ inc:Expresion _ ")" _ stmt:Statement { return crearNodo('for', { inicial:init, condicion:cond, incremento:inc, bloque:stmt }) }
 
@@ -183,7 +191,20 @@ OperacionM = izq:UnariOp  expansion:( _ op:("/" / "*" / "%") _ der:UnariOp {retu
 }   
 
 UnariOp = tipo:("!" / "-") _ exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
-        / Nativo
+        / Call
+
+
+Call = callee:Nativo _  params:("(" _ args:Argumentos? _ ")" { return args })* {
+  return params.reduce(
+    (callee, args) => {
+      return crearNodo('llamada', { callee, args: args || [] })
+    },
+    callee
+  )
+}
+
+
+Argumentos = arg:Expresion args:( _ "," _ exp:Expresion { return exp })* { return [arg, ...args] }
 
 //Se cambio de solo Numero a Nativo para manejar los tipos y hacer las verificaciones
 //semanticas necesarias, para esto tambien sera necesario hacer la expresion de nativo 
