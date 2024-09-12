@@ -1067,16 +1067,12 @@ export class InterpretarVisitor extends BaseVisitor {
         return { tipo: 'string', valor: resultado };
     }
 
-    /*
-     TODO: Arreglar la asignacion a una variable que ya fue declarada
-     TODO: Arreglar la asignacion de un vector ya declarado a otro
-     */
-
     /**
      * @type {BaseVisitor['visitFuncion']}
      */
     visitFuncion(node) {
         const funcion = new funcionesForaneas(node.id, node.params, node.bloque);
+        this.entornoActual.agregarVariable(node.id, { tipo: 'funcion', valor: funcion });
     }
 
 }
