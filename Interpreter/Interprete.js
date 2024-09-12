@@ -16,6 +16,7 @@ export class InterpretarVisitor extends BaseVisitor {
         });
 
         this.continuePrevio = null; // para manejar el continue en las funciones
+        this.continueForEach = null;
         
 
     }
@@ -689,20 +690,6 @@ export class InterpretarVisitor extends BaseVisitor {
         const tipo = node.tipo;
         const valores = node.elementos.map((valor) => valor.accept(this));
 
-        // Al igual que la asignacion normal, si el array es de tipo float y se le
-        // asignan valores tipo entero se debe de hacer una conversion implicita
-
-        if (tipo === 'float') {
-            valores = valores.map(valor => {
-                if (valor.tipo === 'int') {
-                    return { tipo: 'float', valor: parseFloat(valor.valor) };
-                }
-                return valor;
-            });
-        }
-    
-
-
         if (valores.some((valor) => valor.tipo!== tipo)) {
             this.consola += `Error de tipos: no todos los elementos del array son de tipo ${tipo}\n`;
             return { tipo: null, valor: null };
@@ -818,7 +805,10 @@ export class InterpretarVisitor extends BaseVisitor {
             return { tipo: null, valor: null };
         }
 
-        const variable = this.entornoActual.variables[nombre];
+        const variable = this.entornoActual.obtenerValorVariable(nombre);
+
+
+
 
         if (!variable.tipo.endsWith("[]")) {
             this.consola += `Error: '${nombre}' no es un array\n`;
@@ -837,6 +827,7 @@ export class InterpretarVisitor extends BaseVisitor {
         }
 
         return variable.valor[indice.valor];
+        
 
     }
 
@@ -849,6 +840,136 @@ export class InterpretarVisitor extends BaseVisitor {
         const nombre = node.id;
         const indice = node.index.accept(this);
         const expresion = node.exp.accept(this);
+
+        if (!this.entornoActual.verificarVariableExiste(nombre)) {
+            this.consola += `Error: variable '${nombre}' no declarada\n`;
+            return { tipo: null, valor: null };
+        }
+
+        const variable = this.entornoActual.obtenerValorVariable(nombre);
+
+        if (!variable.tipo.endsWith("[]")) {
+            this.consola += `Error: '${nombre}' no es un array\n`;
+            return { tipo: null, valor: null };
+        }
+
+        if (indice.tipo!== 'int') {
+            this.consola += `Error de tipos: el índice debe ser un entero\n`;
+            return { tipo: null, valor: null };
+        }
+
+        if (indice.valor < 0 || indice.valor >= variable.valor.length) {
+            this.consola += `Error: índice fuera de rango\n`;
+            return { tipo: null, valor: null };
+        }
+
+        const tipoArray = variable.tipo.slice(0, -2); // Tipo del array sin los []
+
+        if (expresion.tipo !== tipoArray) {
+            // Permitir conversión implícita de int a float
+            if (tipoArray === 'float' && expresion.tipo === 'int') {
+                expresion.valor = parseFloat(expresion.valor);
+                expresion.tipo = 'float';
+            } else {
+                this.consola += `Error de tipos: no se puede asignar ${expresion.tipo} a un array de ${tipoArray}\n`;
+                return { tipo: null, valor: null };
+            }
+        }
+
+        variable.valor[indice.valor] = { tipo: expresion.tipo, valor: expresion.valor };
+
+        return { tipo: expresion.tipo, valor: expresion.valor };
+    }
+
+    /**
+     * @type {BaseVisitor['visitForeach']}
+     */
+
+    visitForeach(node) {
+        // La idea aca es basicamente hacer un nodo while traduciendo el for a su estructura
+            /*
+            Por ejemplo: 
+            for (var i=0; i<10; i=i+1) print i;
+                Se traduce a:
+                {
+                    var i = 0;
+                    while(i<10){
+                        print i;
+                        i= i + 1;
+                    }
+                }
+            */
+        // Pero aplicado a un foreach que en js seria traducirlo a algo asi
+            /*
+            for ( int numero : arreglo ) {
+                Sentencias
+            }
+                Se traduce a:
+                {
+                    var indice = 0;
+                    while(indice < arreglo.length){
+                        var numero = arreglo[indice];
+                        Sentencias
+                        indice = indice + 1;
+                    }
+                }
+            */
+
+        // crearNodo('foreach', { tipo, id, exp, bloque:stmt }) }
+        
+        const arrayExp = node.exp.accept(this);
+        if (!arrayExp.tipo.endsWith('[]')) {
+            this.consola += `Error: La expresión en el foreach debe ser un array\n`;
+            return;
+        }
+    
+        const arrayTipo = arrayExp.tipo.slice(0, -2); // Remove '[]' from the end
+        if (arrayTipo !== node.tipo) {
+            this.consola += `Error: El tipo del elemento (${node.tipo}) no coincide con el tipo del array (${arrayTipo})\n`;
+            return;
+        }
+    
+        const indexVar = '_index_' + node.id; // Create a unique index variable name
+    
+        const funcForeach = new nodos.Bloque({
+            dcls: [
+                new nodos.DeclaracionSinTipo({
+                    id: indexVar,
+                    valor: new nodos.Nativo({ tipo: 'int', valor: 0 })
+                }),
+                new nodos.While({
+                    condicion: new nodos.OperacionBinaria({
+                        izq: new nodos.ReferenciaVariable({ id: indexVar }),
+                        op: '<',
+                        der: new nodos.Llamada({
+                            callee: new nodos.ReferenciaVariable({ id: 'obtenerLongitudArray' }),
+                            args: [new nodos.ReferenciaVariable({ id: node.exp.id })]
+                        })
+                    }),
+                    bloque: new nodos.Bloque({
+                        dcls: [
+                            new nodos.DeclaracionSinTipo({
+                                id: node.id,
+                                valor: new nodos.AccesoVector({ id: node.exp.id, index: new nodos.ReferenciaVariable({ id: indexVar }) })
+                            }),
+                            node.bloque,
+                            new nodos.Asignacion({
+                                id: indexVar,
+                                exp: new nodos.OperacionBinaria({
+                                    izq: new nodos.ReferenciaVariable({ id: indexVar }),
+                                    op: '+',
+                                    der: new nodos.Nativo({ tipo: 'int', valor: 1 })
+                                })
+                            })
+                        ]
+                    })
+                })
+            ]
+        });
+    
+        funcForeach.accept(this);
+      
+
 
     }
 }

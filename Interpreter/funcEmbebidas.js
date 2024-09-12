@@ -168,6 +168,23 @@ const typeofFunc = new FuncionesNativas(
     }
 )
 
+const obtenerLongitudArrayFunc = new FuncionesNativas(
+    () => 1,
+    (interpretar, args) => {
+        if (args.length !== 1) {
+            interpretar.consola += 'Error: obtenerLongitudArray recibe un solo argumento\n';
+            return { tipo: null, valor: null };
+        }
+        const arg = args[0];
+        
+        if (!arg.tipo.endsWith('[]')) {
+            interpretar.consola += 'Error: obtenerLongitudArray recibe un argumento de tipo array\n';
+            return { tipo: null, valor: null };
+        }
+
+        return { tipo: 'int', valor: arg.valor.length };
+    }
+)
 
 
 export const embebidas = {
@@ -177,4 +194,6 @@ export const embebidas = {
     'toString': toStringFunc,
     'toLowerCase': toLowerCaseFunc,
     'toUpperCase': toUpperCaseFunc,
+    'typeof': typeofFunc,
+    'obtenerLongitudArray': obtenerLongitudArrayFunc
 };

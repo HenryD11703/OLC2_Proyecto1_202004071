@@ -29,7 +29,8 @@
       'arraySimple': nodos.ArraySimple,
       'arrayCopia': nodos.ArrayCopia,
       'accesoVector': nodos.AccesoVector,
-      'asignacionArray': nodos.AsignacionArray
+      'asignacionArray': nodos.AsignacionArray,
+      'foreach': nodos.Foreach,
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -101,6 +102,7 @@ Default = "default" _ ":" _ stmts:Declaracion*
     { return { stmts } }
 
 ForStmt = "for" _ "(" _ init:InitFor _  _ cond:Expresion _ ";" _ inc:Expresion _ ")" _ stmt:Statement { return crearNodo('for', { inicial:init, condicion:cond, incremento:inc, bloque:stmt }) }
+        / "for" _ "(" _ tipo:("int" / "float" / "string" / "boolean" / "char" / "var" ) _ id:Identificador _ ":" _ exp:Expresion _ ")" _ stmt:Statement { return crearNodo('foreach', { tipo, id, exp, bloque:stmt }) }
 
 InitFor = dcl:Variable { return dcl }
         / exp:Expresion ";" { return exp }

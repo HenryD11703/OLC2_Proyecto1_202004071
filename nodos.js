@@ -944,4 +944,53 @@ export class AsignacionArray extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray }
+export class Foreach extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo del elemento del array
+ * @param {string} options.id Identificador del elemento del array
+ * @param {Expresion} options.exp Expresion que representa el array
+ * @param {Expresion} options.bloque Bloque de codigo a ejecutar en cada iteracion
+    */
+    constructor({ tipo, id, exp, bloque }) {
+        super();
+        
+        /**
+         * Tipo del elemento del array
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador del elemento del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Expresion que representa el array
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+
+        /**
+         * Bloque de codigo a ejecutar en cada iteracion
+         * @type {Expresion}
+        */
+        this.bloque = bloque;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitForeach(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach }

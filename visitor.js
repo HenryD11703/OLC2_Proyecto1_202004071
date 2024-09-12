@@ -84,6 +84,9 @@
 
  * @typedef {import('./nodos').AsignacionArray} AsignacionArray
 
+
+ * @typedef {import('./nodos').Foreach} Foreach
+
  */
 
 
@@ -343,6 +346,15 @@ export class BaseVisitor {
      */
     visitAsignacionArray(node) {
         throw new Error('Metodo visitAsignacionArray no implementado');
+    }
+    
+
+    /**
+     * @param {Foreach} node
+     * @returns {any}
+     */
+    visitForeach(node) {
+        throw new Error('Metodo visitForeach no implementado');
     }
     
 }
