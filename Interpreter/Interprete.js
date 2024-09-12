@@ -4,6 +4,7 @@ import nodos, { Expresion, Llamada } from '../nodos.js';
 import { BreakException, ContinueException, ReturnException } from "./sntcTansferencia.js";
 import { LlamadaFunc } from "./llamadaFunc.js";
 import { embebidas } from "./funcEmbebidas.js";
+import { funcionesForaneas } from "./funcForaneas.js";
 
 export class InterpretarVisitor extends BaseVisitor {
     constructor() {
@@ -17,7 +18,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
         this.continuePrevio = null; // para manejar el continue en las funciones
         this.continueForEach = null;
-        
+
 
     }
     /**
@@ -338,11 +339,6 @@ export class InterpretarVisitor extends BaseVisitor {
 
         // Verificar que la variable no haya sido asignada previamente 
 
-        if (this.entornoActual.verificarVariableExiste(nombre)) {
-            this.consola += `Error: variable ${nombre} ya declarada\n`;
-            return;
-        }
-
         // Verificar los tipos de valor y de tipo
         // tipo es la parte de la gramática y valor.tipo sería el tipo verdadero del dato
         // en tipo es int, float, string, boolean, char
@@ -385,7 +381,7 @@ export class InterpretarVisitor extends BaseVisitor {
             .map((arg) => {
                 if (arg.tipo === "string") {
                     return arg.valor;
-                } 
+                }
                 // como los arrays pueden tambien imprimirse directamente
                 else if (arg.tipo !== null && arg.tipo.includes("[]")) {
                     return `[${arg.valor.map(item => item.valor).join(", ")}]`;
@@ -434,7 +430,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
         if (valor.valor === null) {
             this.entornoActual.agregarVariable(nombre, null, null);
-        }   
+        }
         // esto es facil en si por que el valor es decir el nativo ya trae el tipo que queremos
         this.entornoActual.agregarVariable(nombre, valor.tipo, valor.valor);
     }
@@ -472,7 +468,7 @@ export class InterpretarVisitor extends BaseVisitor {
         this.entornoActual = new Entorno(entornoAnterior);
 
         node.dcls.forEach((dcl) => dcl.accept(this));
-        
+
         this.entornoActual = entornoAnterior;
     }
 
@@ -501,7 +497,7 @@ export class InterpretarVisitor extends BaseVisitor {
     visitTernary(node) {
         const condicion = node.condicion.accept(this);
         // verificar si la condicion es booleana, sino reportar el error
-        if (condicion.tipo!== "boolean") {
+        if (condicion.tipo !== "boolean") {
             this.consola += `Error de tipos: la condicion de la operacion ternaria debe ser booleana\n`;
             return { tipo: null, valor: null };
         }
@@ -514,7 +510,7 @@ export class InterpretarVisitor extends BaseVisitor {
             let expFalse = node.expFalse.accept(this);
             return { tipo: expFalse.tipo, valor: expFalse.valor };
         }
-            
+
     }
 
     /**
@@ -547,21 +543,21 @@ export class InterpretarVisitor extends BaseVisitor {
     visitFor(node) {
         const AnteriorIncrement = this.continuePrevio;
         this.continuePrevio = node.incremento;
- // La idea aca es basicamente hacer un nodo while traduciendo el for a su estructura
-            /*
-            Por ejemplo: 
-            for (var i=0; i<10; i=i+1) print i;
-                Se traduce a:
-                {
-                    var i = 0;
-                    while(i<10){
-                        print i;
-                        i= i + 1;
-                    }
+        // La idea aca es basicamente hacer un nodo while traduciendo el for a su estructura
+        /*
+        Por ejemplo: 
+        for (var i=0; i<10; i=i+1) print i;
+            Se traduce a:
+            {
+                var i = 0;
+                while(i<10){
+                    print i;
+                    i= i + 1;
                 }
-            */
+            }
+        */
         const funcFor = new nodos.Bloque({
-           dcls: [
+            dcls: [
                 node.inicial,
                 new nodos.While({
                     condicion: node.condicion,
@@ -572,7 +568,7 @@ export class InterpretarVisitor extends BaseVisitor {
                         ]
                     })
                 })
-           ]
+            ]
         })
         funcFor.accept(this);
         this.continuePrevio = AnteriorIncrement;
@@ -590,30 +586,30 @@ export class InterpretarVisitor extends BaseVisitor {
      */
     visitSwitch(node) {
         const switchValue = node.exp.accept(this);
-        
+
         if (switchValue.tipo === null) {
             this.consola += `Error: Invalid switch expression\n`;
             return;
         }
-        
+
         let matched = false;
         let executeNext = false;
-        
+
         for (const caseNode of node.cases) {
             if (!matched && !executeNext) {
                 const caseValue = caseNode.valor.accept(this);
-                
+
                 if (caseValue.tipo === null) {
                     this.consola += `Error: Invalid case expression\n`;
                     continue;
                 }
-            
+
                 if (switchValue.valor === caseValue.valor) {
                     matched = true;
                     executeNext = true;
                 }
             }
-            
+
             if (executeNext) {
                 for (const stmt of caseNode.stmts) {
                     try {
@@ -631,7 +627,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 }
             }
         }
-        
+
         // Handle default case if no break was encountered
         if (executeNext && node.def) {
             for (const stmt of node.def.stmts) {
@@ -662,11 +658,11 @@ export class InterpretarVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitReturn']}
      */
     visitReturn(node) {
-       let valor = null;
-       if (node.exp) {
-        valor = node.exp.accept(this);
-       } 
-       throw new ReturnException(valor);
+        let valor = null;
+        if (node.exp) {
+            valor = node.exp.accept(this);
+        }
+        throw new ReturnException(valor);
     }
 
     /**
@@ -688,7 +684,7 @@ export class InterpretarVisitor extends BaseVisitor {
             return { tipo: null, valor: null };
         }
     }
-    
+
     /**
      * @type {BaseVisitor['visitArray']}
      */
@@ -697,10 +693,10 @@ export class InterpretarVisitor extends BaseVisitor {
         const tipo = node.tipo;
         const valores = node.elementos.map((valor) => valor.accept(this));
 
-        if (valores.some((valor) => valor.tipo!== tipo)) {
+        if (valores.some((valor) => valor.tipo !== tipo)) {
             this.consola += `Error de tipos: no todos los elementos del array son de tipo ${tipo}\n`;
             return { tipo: null, valor: null };
-        } 
+        }
         if (this.entornoActual.verificarVariableExiste(nombre)) {
             this.consola += `Error: variable ${nombre} ya declarada\n`;
             return { tipo: null, valor: null };
@@ -709,7 +705,7 @@ export class InterpretarVisitor extends BaseVisitor {
         const arrayValor = valores.map(v => ({ tipo: v.tipo, valor: v.valor }));
 
         this.entornoActual.agregarVariable(nombre, arrayTipo, arrayValor);
-        
+
     }
 
     /**
@@ -725,7 +721,7 @@ export class InterpretarVisitor extends BaseVisitor {
         if (size.tipo !== "int") {
             this.consola += `Error de tipos: el tamaño del array debe ser un entero\n`;
             return { tipo: null, valor: null };
-        } 
+        }
 
         // Primero verificar que tipo 1 sea igual a tipo 2
         if (tipo1 !== tipo2) {
@@ -787,16 +783,20 @@ export class InterpretarVisitor extends BaseVisitor {
 
         // Verificar los tipos de ambos arrays, cuando es array es el mismo tipo pero con [] al final
 
-        if ( this.entornoActual.variables[otroArray].tipo.endsWith("[]") && this.entornoActual.variables[otroArray].tipo.slice(0, -2) === tipo) {
-            // Si el tipo es el mismo se puede hacer la copia
-            this.entornoActual.agregarVariable(nombre, tipo + "[]", this.entornoActual.variables[otroArray].valor);
-        }
+        let array = this.entornoActual.obtenerValorVariable(otroArray);
+
+        if (this.entornoActual.variables[otroArray].tipo.endsWith("[]") && this.entornoActual.variables[otroArray].tipo.slice(0, -2) === tipo) {
+            const copiedArray = array.valor.map(item => ({ ...item }));
+            this.entornoActual.agregarVariable(nombre, tipo + "[]", copiedArray);     
+        } 
 
         // Si no se cumple la condicion anterior se reporta un error
         else {
             this.consola += `Error de tipos: los tipos de los arrays deben ser iguales\n`;
             return { tipo: null, valor: null };
         }
+
+
     }
 
     /**
@@ -822,7 +822,7 @@ export class InterpretarVisitor extends BaseVisitor {
             return { tipo: null, valor: null };
         }
 
-        if (indice.tipo!== 'int') {
+        if (indice.tipo !== 'int') {
             this.consola += `Error de tipos: el índice debe ser un entero\n`;
             return { tipo: null, valor: null };
         }
@@ -834,7 +834,7 @@ export class InterpretarVisitor extends BaseVisitor {
         }
 
         return variable.valor[indice.valor];
-        
+
 
     }
 
@@ -860,7 +860,7 @@ export class InterpretarVisitor extends BaseVisitor {
             return { tipo: null, valor: null };
         }
 
-        if (indice.tipo!== 'int') {
+        if (indice.tipo !== 'int') {
             this.consola += `Error de tipos: el índice debe ser un entero\n`;
             return { tipo: null, valor: null };
         }
@@ -894,50 +894,50 @@ export class InterpretarVisitor extends BaseVisitor {
 
     visitForeach(node) {
         // La idea aca es basicamente hacer un nodo while traduciendo el for a su estructura
-            /*
-            Por ejemplo: 
-            for (var i=0; i<10; i=i+1) print i;
-                Se traduce a:
-                {
-                    var i = 0;
-                    while(i<10){
-                        print i;
-                        i= i + 1;
-                    }
+        /*
+        Por ejemplo: 
+        for (var i=0; i<10; i=i+1) print i;
+            Se traduce a:
+            {
+                var i = 0;
+                while(i<10){
+                    print i;
+                    i= i + 1;
                 }
-            */
-        // Pero aplicado a un foreach que en js seria traducirlo a algo asi
-            /*
-            for ( int numero : arreglo ) {
-                Sentencias
             }
-                Se traduce a:
-                {
-                    var indice = 0;
-                    while(indice < arreglo.length){
-                        var numero = arreglo[indice];
-                        Sentencias
-                        indice = indice + 1;
-                    }
+        */
+        // Pero aplicado a un foreach que en js seria traducirlo a algo asi
+        /*
+        for ( int numero : arreglo ) {
+            Sentencias
+        }
+            Se traduce a:
+            {
+                var indice = 0;
+                while(indice < arreglo.length){
+                    var numero = arreglo[indice];
+                    Sentencias
+                    indice = indice + 1;
                 }
-            */
+            }
+        */
 
         // crearNodo('foreach', { tipo, id, exp, bloque:stmt }) }
-        
+
         const arrayExp = node.exp.accept(this);
         if (!arrayExp.tipo.endsWith('[]')) {
             this.consola += `Error: La expresión en el foreach debe ser un array\n`;
             return;
         }
-    
+
         const arrayTipo = arrayExp.tipo.slice(0, -2); // Remove '[]' 
         if (arrayTipo !== node.tipo) {
             this.consola += `Error: El tipo del elemento (${node.tipo}) no coincide con el tipo del array (${arrayTipo})\n`;
             return;
         }
-    
-        const indexVar = '_index_' + node.id; 
-    
+
+        const indexVar = '_index_' + node.id;
+
         const funcForeach = new nodos.Bloque({
             dcls: [
                 new nodos.DeclaracionSinTipo({
@@ -973,7 +973,7 @@ export class InterpretarVisitor extends BaseVisitor {
                 })
             ]
         });
-    
+
         funcForeach.accept(this);
     }
 
@@ -999,11 +999,11 @@ export class InterpretarVisitor extends BaseVisitor {
             return { tipo: 'int', valor: -1 };
         }
 
-        if (exp.tipo!== variable.tipo.slice(0, -2)) {
+        if (exp.tipo !== variable.tipo.slice(0, -2)) {
             this.consola += `Error de tipos: el tipo de la expresión debe coincidir con el tipo del array\n`;
             return { tipo: 'int', valor: -1 };
         }
-        
+
         // Buscar el indice de la variable en el array
 
         for (let i = 0; i < variable.valor.length; i++) {
@@ -1041,7 +1041,7 @@ export class InterpretarVisitor extends BaseVisitor {
     */
     visitJoin(node) {
         const id = node.id;
-        
+
         if (!this.entornoActual.verificarVariableExiste(id)) {
             this.consola += `Error: variable '${id}' no declarada\n`;
             return { tipo: 'string', valor: '' };
@@ -1051,7 +1051,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
         if (!variable.tipo.endsWith("[]")) {
             this.consola += `Error: '${id}' no es un array\n`;
-            return { tipo: null , valor: null };
+            return { tipo: null, valor: null };
         }
 
         let resultado = ''; // Construirlo con cada valor separado por comas
@@ -1064,12 +1064,19 @@ export class InterpretarVisitor extends BaseVisitor {
                 resultado += variable.valor[i].valor;
             }
         }
-        return { tipo:'string', valor: resultado };
+        return { tipo: 'string', valor: resultado };
     }
 
     /*
      TODO: Arreglar la asignacion a una variable que ya fue declarada
      TODO: Arreglar la asignacion de un vector ya declarado a otro
      */
+
+    /**
+     * @type {BaseVisitor['visitFuncion']}
+     */
+    visitFuncion(node) {
+        const funcion = new funcionesForaneas(node.id, node.params, node.bloque);
+    }
 
 }

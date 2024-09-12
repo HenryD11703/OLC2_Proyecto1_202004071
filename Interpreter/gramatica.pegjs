@@ -33,7 +33,8 @@
       'foreach': nodos.Foreach,
       'indexof': nodos.IndexOf,
       'length': nodos.Length,
-      'join': nodos.Join
+      'join': nodos.Join,
+      'funcion': nodos.Funcion
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -62,8 +63,16 @@ Codigo = _ dcl:Declaracion* _ { return dcl }
 
 Declaracion = dcl:Variable _ { return dcl }
             / array:Array _ { return array }
+            / func:FuncDcl _ { return func }
             / stmt:Statement _ { return stmt }
 
+// La funcion puede tener parametros o no
+// La funcion puede ser de tipo normal o de tipo array, para indicar el tipo array se usa [] o tambien puede ser void el cual no retorna nada
+FuncDcl = tipo:( "int[]" / "float[]" / "string[]" / "boolean[]" / "char[]" / "int" / "float" / "string" / "boolean" / "char" / "void") _ id:Identificador _ "(" _ params:Parametros? _ ")" _ bloque:Bloque { return crearNodo('funcion', { tipo, id, params: params || [], bloque }) }
+
+// Parametros puede ser arrays normales, o tipos normales tambien, y con un id
+
+Parametros = tipo:( "int[]" / "float[]" / "string[]" / "boolean[]" / "char[]" / "int" / "float" / "string" / "boolean" / "char") _ id:Identificador params:( _ "," _ tipo2:("int[]" / "float[]" / "string[]" / "boolean[]" / "char[]" / "int" / "float" / "string" / "boolean" / "char") _ id2:Identificador { return { tipo2, id2 } })* { return [{ tipo, id }, ...params] }
 
 // El array se puede declarar de dos maneras
 // Con una lista de valores dentro de {}

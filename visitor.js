@@ -96,6 +96,9 @@
 
  * @typedef {import('./nodos').Join} Join
 
+
+ * @typedef {import('./nodos').Funcion} Funcion
+
  */
 
 
@@ -391,6 +394,15 @@ export class BaseVisitor {
      */
     visitJoin(node) {
         throw new Error('Metodo visitJoin no implementado');
+    }
+    
+
+    /**
+     * @param {Funcion} node
+     * @returns {any}
+     */
+    visitFuncion(node) {
+        throw new Error('Metodo visitFuncion no implementado');
     }
     
 }
