@@ -31,6 +31,9 @@
       'accesoVector': nodos.AccesoVector,
       'asignacionArray': nodos.AsignacionArray,
       'foreach': nodos.Foreach,
+      'indexof': nodos.IndexOf,
+      'length': nodos.Length,
+      'join': nodos.Join
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -258,6 +261,9 @@ Nativo = [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: 
         / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
         / "[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
         / id:Identificador _ "[" _ index:Expresion _ "]" { return crearNodo('accesoVector', {id, index}) }
+        / id:Identificador ".indexOf(" _ exp:Expresion _ ")" { return crearNodo('indexof', {id, exp}) }
+        / id:Identificador ".join(" _ ")" { return crearNodo('join', {id}) }
+        / id:Identificador ".length" { return crearNodo('length', {id}) }
         / id:Identificador { return crearNodo('accesoVar', {id}) }
 
 _ = ([ \t\n\r] / Comments)*

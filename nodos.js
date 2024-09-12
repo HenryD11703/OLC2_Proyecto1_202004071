@@ -993,4 +993,87 @@ export class Foreach extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach }
+export class IndexOf extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del array
+ * @param {Expresion} options.exp Expresion que representa el elemento a buscar
+    */
+    constructor({ id, exp }) {
+        super();
+        
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Expresion que representa el elemento a buscar
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitIndexOf(this);
+    }
+}
+    
+export class Length extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del array
+    */
+    constructor({ id }) {
+        super();
+        
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitLength(this);
+    }
+}
+    
+export class Join extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del array
+    */
+    constructor({ id }) {
+        super();
+        
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitJoin(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join }

@@ -87,6 +87,15 @@
 
  * @typedef {import('./nodos').Foreach} Foreach
 
+
+ * @typedef {import('./nodos').IndexOf} IndexOf
+
+
+ * @typedef {import('./nodos').Length} Length
+
+
+ * @typedef {import('./nodos').Join} Join
+
  */
 
 
@@ -355,6 +364,33 @@ export class BaseVisitor {
      */
     visitForeach(node) {
         throw new Error('Metodo visitForeach no implementado');
+    }
+    
+
+    /**
+     * @param {IndexOf} node
+     * @returns {any}
+     */
+    visitIndexOf(node) {
+        throw new Error('Metodo visitIndexOf no implementado');
+    }
+    
+
+    /**
+     * @param {Length} node
+     * @returns {any}
+     */
+    visitLength(node) {
+        throw new Error('Metodo visitLength no implementado');
+    }
+    
+
+    /**
+     * @param {Join} node
+     * @returns {any}
+     */
+    visitJoin(node) {
+        throw new Error('Metodo visitJoin no implementado');
     }
     
 }

@@ -336,6 +336,13 @@ export class InterpretarVisitor extends BaseVisitor {
         const nombre = node.id;
         const valor = node.valor.accept(this);
 
+        // Verificar que la variable no haya sido asignada previamente 
+
+        if (this.entornoActual.verificarVariableExiste(nombre)) {
+            this.consola += `Error: variable ${nombre} ya declarada\n`;
+            return;
+        }
+
         // Verificar los tipos de valor y de tipo
         // tipo es la parte de la gramática y valor.tipo sería el tipo verdadero del dato
         // en tipo es int, float, string, boolean, char
@@ -923,13 +930,13 @@ export class InterpretarVisitor extends BaseVisitor {
             return;
         }
     
-        const arrayTipo = arrayExp.tipo.slice(0, -2); // Remove '[]' from the end
+        const arrayTipo = arrayExp.tipo.slice(0, -2); // Remove '[]' 
         if (arrayTipo !== node.tipo) {
             this.consola += `Error: El tipo del elemento (${node.tipo}) no coincide con el tipo del array (${arrayTipo})\n`;
             return;
         }
     
-        const indexVar = '_index_' + node.id; // Create a unique index variable name
+        const indexVar = '_index_' + node.id; 
     
         const funcForeach = new nodos.Bloque({
             dcls: [
@@ -968,8 +975,101 @@ export class InterpretarVisitor extends BaseVisitor {
         });
     
         funcForeach.accept(this);
-      
-
-
     }
+
+    /**
+     * @type {BaseVisitor['visitIndexOf']}
+     */
+    visitIndexOf(node) {
+        const id = node.id;
+        const exp = node.exp.accept(this);
+
+        // Buscar la variable en la tabla de simbolos y verificar que sea un array
+        // Luego buscar el indice del elemento en el array, si no existe retornar -1
+
+        if (!this.entornoActual.verificarVariableExiste(id)) {
+            this.consola += `Error: variable '${id}' no declarada\n`;
+            return { tipo: 'int', valor: -1 };
+        }
+
+        const variable = this.entornoActual.obtenerValorVariable(id);
+
+        if (!variable.tipo.endsWith("[]")) {
+            this.consola += `Error: '${id}' no es un array\n`;
+            return { tipo: 'int', valor: -1 };
+        }
+
+        if (exp.tipo!== variable.tipo.slice(0, -2)) {
+            this.consola += `Error de tipos: el tipo de la expresión debe coincidir con el tipo del array\n`;
+            return { tipo: 'int', valor: -1 };
+        }
+        
+        // Buscar el indice de la variable en el array
+
+        for (let i = 0; i < variable.valor.length; i++) {
+            if (variable.valor[i].tipo === exp.tipo && variable.valor[i].valor === exp.valor) {
+                return { tipo: 'int', valor: i };
+            }
+        }
+
+        return { tipo: 'int', valor: -1 };
+    }
+
+    /**
+     * @type {BaseVisitor['visitLength']}
+     */
+    visitLength(node) {
+        const id = node.id;
+
+        if (!this.entornoActual.verificarVariableExiste(id)) {
+            this.consola += `Error: variable '${id}' no declarada\n`;
+            return { tipo: 'int', valor: -1 };
+        }
+
+        const variable = this.entornoActual.obtenerValorVariable(id);
+
+        if (!variable.tipo.endsWith("[]")) {
+            this.consola += `Error: '${id}' no es un array\n`;
+            return { tipo: 'int', valor: -1 };
+        }
+
+        return { tipo: 'int', valor: variable.valor.length };
+    }
+
+    /**
+    * @type {BaseVisitor['visitJoin']}
+    */
+    visitJoin(node) {
+        const id = node.id;
+        
+        if (!this.entornoActual.verificarVariableExiste(id)) {
+            this.consola += `Error: variable '${id}' no declarada\n`;
+            return { tipo: 'string', valor: '' };
+        }
+
+        const variable = this.entornoActual.obtenerValorVariable(id);
+
+        if (!variable.tipo.endsWith("[]")) {
+            this.consola += `Error: '${id}' no es un array\n`;
+            return { tipo: null , valor: null };
+        }
+
+        let resultado = ''; // Construirlo con cada valor separado por comas
+
+        for (let i = 0; i < variable.valor.length; i++) {
+            // Para evitar agregarle coma al último elemento
+            if (i < variable.valor.length - 1) {
+                resultado += variable.valor[i].valor + ', ';
+            } else {
+                resultado += variable.valor[i].valor;
+            }
+        }
+        return { tipo:'string', valor: resultado };
+    }
+
+    /*
+     TODO: Arreglar la asignacion a una variable que ya fue declarada
+     TODO: Arreglar la asignacion de un vector ya declarado a otro
+     */
+
 }
