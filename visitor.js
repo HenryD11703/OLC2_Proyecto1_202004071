@@ -69,6 +69,21 @@
 
  * @typedef {import('./nodos').Llamada} Llamada
 
+
+ * @typedef {import('./nodos').Array} Array
+
+
+ * @typedef {import('./nodos').ArraySimple} ArraySimple
+
+
+ * @typedef {import('./nodos').ArrayCopia} ArrayCopia
+
+
+ * @typedef {import('./nodos').AccesoVector} AccesoVector
+
+
+ * @typedef {import('./nodos').AsignacionArray} AsignacionArray
+
  */
 
 
@@ -283,6 +298,51 @@ export class BaseVisitor {
      */
     visitLlamada(node) {
         throw new Error('Metodo visitLlamada no implementado');
+    }
+    
+
+    /**
+     * @param {Array} node
+     * @returns {any}
+     */
+    visitArray(node) {
+        throw new Error('Metodo visitArray no implementado');
+    }
+    
+
+    /**
+     * @param {ArraySimple} node
+     * @returns {any}
+     */
+    visitArraySimple(node) {
+        throw new Error('Metodo visitArraySimple no implementado');
+    }
+    
+
+    /**
+     * @param {ArrayCopia} node
+     * @returns {any}
+     */
+    visitArrayCopia(node) {
+        throw new Error('Metodo visitArrayCopia no implementado');
+    }
+    
+
+    /**
+     * @param {AccesoVector} node
+     * @returns {any}
+     */
+    visitAccesoVector(node) {
+        throw new Error('Metodo visitAccesoVector no implementado');
+    }
+    
+
+    /**
+     * @param {AsignacionArray} node
+     * @returns {any}
+     */
+    visitAsignacionArray(node) {
+        throw new Error('Metodo visitAsignacionArray no implementado');
     }
     
 }

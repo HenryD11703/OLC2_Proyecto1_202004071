@@ -1,0 +1,37 @@
+float n = 10;       
+string cadenaFigura = "";
+float i; 
+i=-3*n/2;
+        //iniciando dibujo
+while(i<=n){
+            cadenaFigura = "";
+            float j; 
+            j=-3*n/2;
+            while(j<=3*n){
+                float absolutoi;
+                absolutoi = i;
+                float absolutoj;
+                absolutoj = j;
+                if(i < 0)
+                {
+                    absolutoi = i * -1;
+                }
+                if(j < 0)
+                {
+                    absolutoj = j * -1;
+                }
+                if((absolutoi + absolutoj < n)
+                        || ((-n / 2 - i) * (-n / 2 - i) + (n / 2 - j) * (n / 2 - j) <= n * n / 2)
+                        || ((-n / 2 - i) * (-n / 2 - i) + (-n / 2 - j) * (-n / 2 - j) <= n * n / 2)) {
+                    cadenaFigura = cadenaFigura + "* ";
+                }
+                else
+                {
+                    cadenaFigura = cadenaFigura + ". ";
+                }
+                j=j+1;
+            }
+            System.out.println(cadenaFigura);
+            i=i+1;
+        }
+   

@@ -3,6 +3,7 @@ import { Entorno } from "./entorno.js";
 import nodos, { Expresion, Llamada } from '../nodos.js';
 import { BreakException, ContinueException, ReturnException } from "./sntcTansferencia.js";
 import { LlamadaFunc } from "./llamadaFunc.js";
+import { embebidas } from "./funcEmbebidas.js";
 
 export class InterpretarVisitor extends BaseVisitor {
     constructor() {
@@ -10,7 +11,12 @@ export class InterpretarVisitor extends BaseVisitor {
         this.entornoActual = new Entorno(); //Entorno Padre
         this.consola = ""; // Cadena para imprimir en la consola
 
+        Object.entries(embebidas).forEach(([nombre, funcion]) => {
+            this.entornoActual.agregarVariable(nombre, funcion);
+        });
+
         this.continuePrevio = null; // para manejar el continue en las funciones
+        
 
     }
     /**
@@ -353,7 +359,7 @@ export class InterpretarVisitor extends BaseVisitor {
         const nombre = node.id;
         const nativo = this.entornoActual.obtenerValorVariable(nombre);
         // nativo es un objeto { tipo: string, valor: any }
-        if (nativo.tipo === null) {
+        if (nativo.valor === null) {
             this.consola += `Error: variable ${nombre} no declarada\n`;
             return { tipo: null, valor: null };
         }
@@ -371,6 +377,10 @@ export class InterpretarVisitor extends BaseVisitor {
             .map((arg) => {
                 if (arg.tipo === "string") {
                     return arg.valor;
+                } 
+                // como los arrays pueden tambien imprimirse directamente
+                else if (arg.tipo !== null && arg.tipo.includes("[]")) {
+                    return `[${arg.valor.map(item => item.valor).join(", ")}]`;
                 } else {
                     return `${arg.valor}`;
                 }
@@ -402,29 +412,8 @@ export class InterpretarVisitor extends BaseVisitor {
     visitDeclaracionSimple(node) {
         const tipo = node.tipo;
         const nombre = node.id;
-        // Esta forma de declaracion no cuenta con valor por lo que se le asignara uno por defecto
-        let valor;
-        switch (tipo) {
-            case "int":
-                valor = 0;
-                break;
-            case "float":
-                valor = 0.0;
-                break;
-            case "string":
-                valor = "";
-                break;
-            case "boolean":
-                valor = true;
-                break;
-            case "char":
-                valor = "";
-                break;
-            default:
-                this.consola += `Error de tipos: tipo ${tipo} no soportado\n`;
-        }
-
-        this.entornoActual.agregarVariable(nombre, tipo, valor);
+        // Esta forma de declaracion no cuenta con un valor inicial y se le pone null
+        this.entornoActual.agregarVariable(nombre, tipo, null);
     }
 
     /**
@@ -675,16 +664,191 @@ export class InterpretarVisitor extends BaseVisitor {
     /**
      * @type {BaseVisitor['visitLlamada']}
      */
+    // System.out.println(time());
     visitLlamada(node) {
-        const funcion = node.callee.accept(this);
+        const funcionObj = node.callee.accept(this);
         const argumentos = node.args.map((arg) => arg.accept(this));
 
-        console.log("Funcion: ", funcion);
-        console.log("Argumentos: ", argumentos);
+        if (funcionObj.tipo instanceof LlamadaFunc) {
+            // Es una función nativa
+            return funcionObj.tipo.invocar(this, argumentos);
+        } else if (typeof funcionObj.valor === 'function') {
+            // Es una función regular
+            return funcionObj.valor(...argumentos);
+        } else {
+            this.consola += `Error: '${node.callee}' no es una función\n`;
+            return { tipo: null, valor: null };
+        }
+    }
+    
+    /**
+     * @type {BaseVisitor['visitArray']}
+     */
+    visitArray(node) {
+        const nombre = node.id;
+        const tipo = node.tipo;
+        const valores = node.elementos.map((valor) => valor.accept(this));
 
-        if(!(funcion instanceof LlamadaFunc)){
-            throw new Error('No se puede llamar a un objeto que no sea una función');
+        // Al igual que la asignacion normal, si el array es de tipo float y se le
+        // asignan valores tipo entero se debe de hacer una conversion implicita
+
+        if (tipo === 'float') {
+            valores = valores.map(valor => {
+                if (valor.tipo === 'int') {
+                    return { tipo: 'float', valor: parseFloat(valor.valor) };
+                }
+                return valor;
+            });
+        }
+    
+
+
+        if (valores.some((valor) => valor.tipo!== tipo)) {
+            this.consola += `Error de tipos: no todos los elementos del array son de tipo ${tipo}\n`;
+            return { tipo: null, valor: null };
+        } 
+        if (this.entornoActual.verificarVariableExiste(nombre)) {
+            this.consola += `Error: variable ${nombre} ya declarada\n`;
+            return { tipo: null, valor: null };
+        }
+        const arrayTipo = `${tipo}[]`; // Representación del tipo de array
+        const arrayValor = valores.map(v => ({ tipo: v.tipo, valor: v.valor }));
+
+        this.entornoActual.agregarVariable(nombre, arrayTipo, arrayValor);
+        
+    }
+
+    /**
+     * @type {BaseVisitor['visitArraySimple']}
+     */
+    visitArraySimple(node) {
+        const nombre = node.id;
+        const tipo1 = node.tipo1;
+        const tipo2 = node.tipo2;
+        const size = node.size;
+
+
+        if (size.tipo !== "int") {
+            this.consola += `Error de tipos: el tamaño del array debe ser un entero\n`;
+            return { tipo: null, valor: null };
+        } 
+
+        // Primero verificar que tipo 1 sea igual a tipo 2
+        if (tipo1 !== tipo2) {
+            this.consola += `Error de tipos: el tipo 1 y tipo 2 deben ser iguales\n`;
+            return { tipo: null, valor: null };
+        }
+
+        if (this.entornoActual.verificarVariableExiste(nombre)) {
+            this.consola += `Error: variable ${nombre} ya declarada\n`;
+            return { tipo: null, valor: null };
+        }
+
+        // Asignar los valores por defecto segun el tipo de array y el size
+        // int - 0
+        // float - 0.0
+        // string - ""
+        // boolean - false
+        // char \u0000 (null)
+        // struct - null // Segun esto se puede hacer un array de structs :O
+
+        let valores = []
+
+        for (let i = 0; i < size.valor; i++) {
+            if (tipo1 === "int") {
+                valores.push({ tipo: tipo1, valor: 0 });
+            } else if (tipo1 === "float") {
+                valores.push({ tipo: tipo1, valor: 0.0 });
+            } else if (tipo1 === "string") {
+                valores.push({ tipo: tipo1, valor: "" });
+            } else if (tipo1 === "boolean") {
+                valores.push({ tipo: tipo1, valor: false });
+            } else if (tipo1 === "char") {
+                valores.push({ tipo: tipo1, valor: "\u0000" });
+            } else if (tipo1 === "struct") {
+                valores.push({ tipo: tipo1, valor: null });
+            }
+        }
+        const arrayTipo = `${tipo1}[]`; // Representación del tipo de array
+        const arrayValor = valores;
+        this.entornoActual.agregarVariable(nombre, arrayTipo, arrayValor);
+
+    }
+
+    /**
+     * @type {BaseVisitor['visitArrayCopia']}
+     */
+    visitArrayCopia(node) {
+        const nombre = node.id;
+        const tipo = node.tipo;
+        const otroArray = node.id2;
+
+        // buscar otroArray en la tabla de simbolos y asignarlo a un nuevo valor con el nombre
+        // primero verificar si el otroArray existe
+
+        if (!this.entornoActual.verificarVariableExiste(otroArray)) {
+            this.consola += `Error: variable '${otroArray}' no declarada\n`;
+            return { tipo: null, valor: null };
+        }
+
+        // Verificar los tipos de ambos arrays, cuando es array es el mismo tipo pero con [] al final
+
+        if ( this.entornoActual.variables[otroArray].tipo.endsWith("[]") && this.entornoActual.variables[otroArray].tipo.slice(0, -2) === tipo) {
+            // Si el tipo es el mismo se puede hacer la copia
+            this.entornoActual.agregarVariable(nombre, tipo + "[]", this.entornoActual.variables[otroArray].valor);
+        }
+
+        // Si no se cumple la condicion anterior se reporta un error
+        else {
+            this.consola += `Error de tipos: los tipos de los arrays deben ser iguales\n`;
+            return { tipo: null, valor: null };
         }
     }
 
+    /**
+     * @type {BaseVisitor['visitAccesoVector']}
+     */
+    visitAccesoVector(node) {
+        const nombre = node.id;
+        const indice = node.index.accept(this);
+
+        // Buscar la variable en la tabla de simbolos y verificar que sea un array
+        if (!this.entornoActual.verificarVariableExiste(nombre)) {
+            this.consola += `Error: variable '${nombre}' no declarada\n`;
+            return { tipo: null, valor: null };
+        }
+
+        const variable = this.entornoActual.variables[nombre];
+
+        if (!variable.tipo.endsWith("[]")) {
+            this.consola += `Error: '${nombre}' no es un array\n`;
+            return { tipo: null, valor: null };
+        }
+
+        if (indice.tipo!== 'int') {
+            this.consola += `Error de tipos: el índice debe ser un entero\n`;
+            return { tipo: null, valor: null };
+        }
+
+
+        if (indice.valor < 0 || indice.valor >= variable.valor.length) {
+            this.consola += `Error: índice fuera de rango\n`;
+            return { tipo: null, valor: null };
+        }
+
+        return variable.valor[indice.valor];
+
+    }
+
+    /**
+     * @type {BaseVisitor['visitAsignacionArray']}
+     * * Asignar un valor a un elemento del array en una posición específica
+     * * array[0] = 10;
+     */
+    visitAsignacionArray(node) {
+        const nombre = node.id;
+        const indice = node.index.accept(this);
+        const expresion = node.exp.accept(this);
+
+    }
 }

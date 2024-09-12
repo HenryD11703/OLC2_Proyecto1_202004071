@@ -739,4 +739,209 @@ export class Llamada extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada }
+export class Array extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo del array
+ * @param {string} options.id Identificador del array
+ * @param {Expresion[]} options.elementos Elementos del array
+    */
+    constructor({ tipo, id, elementos }) {
+        super();
+        
+        /**
+         * Tipo del array
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Elementos del array
+         * @type {Expresion[]}
+        */
+        this.elementos = elementos;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitArray(this);
+    }
+}
+    
+export class ArraySimple extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo1 Tipo del array
+ * @param {string} options.id Identificador del array
+ * @param {string} options.tipo2 Tipo de los elementos del array
+ * @param {number} options.size Tamaño del array
+    */
+    constructor({ tipo1, id, tipo2, size }) {
+        super();
+        
+        /**
+         * Tipo del array
+         * @type {string}
+        */
+        this.tipo1 = tipo1;
+
+
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Tipo de los elementos del array
+         * @type {string}
+        */
+        this.tipo2 = tipo2;
+
+
+        /**
+         * Tamaño del array
+         * @type {number}
+        */
+        this.size = size;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitArraySimple(this);
+    }
+}
+    
+export class ArrayCopia extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo del array
+ * @param {string} options.id Identificador del array
+ * @param {string} options.id2 Identificador del array a copiar
+    */
+    constructor({ tipo, id, id2 }) {
+        super();
+        
+        /**
+         * Tipo del array
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Identificador del array a copiar
+         * @type {string}
+        */
+        this.id2 = id2;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitArrayCopia(this);
+    }
+}
+    
+export class AccesoVector extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del array
+ * @param {Expresion} options.index Expresion que representa el indice del array
+    */
+    constructor({ id, index }) {
+        super();
+        
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Expresion que representa el indice del array
+         * @type {Expresion}
+        */
+        this.index = index;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitAccesoVector(this);
+    }
+}
+    
+export class AsignacionArray extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del array
+ * @param {Expresion} options.index Expresion que representa el indice del array
+ * @param {Expresion} options.exp Expresion que representa el valor a asignar
+    */
+    constructor({ id, index, exp }) {
+        super();
+        
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Expresion que representa el indice del array
+         * @type {Expresion}
+        */
+        this.index = index;
+
+
+        /**
+         * Expresion que representa el valor a asignar
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitAsignacionArray(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray }

@@ -24,7 +24,12 @@
       'break': nodos.Break,
       'continue': nodos.Continue,
       'return': nodos.Return,
-      'llamada': nodos.Llamada
+      'llamada': nodos.Llamada,
+      'array': nodos.Array,
+      'arraySimple': nodos.ArraySimple,
+      'arrayCopia': nodos.ArrayCopia,
+      'accesoVector': nodos.AccesoVector,
+      'asignacionArray': nodos.AsignacionArray
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -52,7 +57,19 @@
 Codigo = _ dcl:Declaracion* _ { return dcl }
 
 Declaracion = dcl:Variable _ { return dcl }
-          /   stmt:Statement _ { return stmt }
+            / array:Array _ { return array }
+            / stmt:Statement _ { return stmt }
+
+
+// El array se puede declarar de dos maneras
+// Con una lista de valores dentro de {}
+// O con un tamaño y sin valores  int[] id = new int[5];
+// tambien se puede crear asi: int[] id = otroArray;
+
+Array = _ tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ id:Identificador _ "=" _ "{" _ valores:Argumentos _ "}" _ ";" { return crearNodo('array', { tipo, id, elementos: valores }) }
+      / _ tipo1:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ id:Identificador _ "=" _ "new" _ tipo2:("int" / "float" / "string" / "boolean" / "char") _ "[" _ tam:Expresion _ "]" _ ";" { return crearNodo('arraySimple', { tipo1, id, tipo2, size:tam }) }
+      / _ tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ id:Identificador _ "=" _ id2:Identificador _ ";" { return crearNodo('arrayCopia', { tipo, id, id2 }) }
+
 
 // Para declarar variables hay distintas maneras
 // la normal de declarar con el tipo, el id y el valor
@@ -102,21 +119,38 @@ Identificador = [a-zA-Z_][a-zA-Z0-9_]* { return text() }
 
 Expresion = Asignacion
 
-Asignacion = id:Identificador _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
-  if (op === "+=") {
-    return crearNodo('asignacion', { 
-      id, 
-      exp: crearNodo('binaria', { op: '+', izq: crearNodo('accesoVar', {id}), der: exp })
-    })
-  } else if (op === "-=") {
-    return crearNodo('asignacion', { 
-      id, 
-      exp: crearNodo('binaria', { op: '-', izq: crearNodo('accesoVar', {id}), der: exp })
-    })
-  } else {
-    return crearNodo('asignacion', { id, exp })
-  }
-}
+Asignacion = id:Identificador _ "[" _ index:Expresion _ "]" _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
+              if (op === "+=") {
+                return crearNodo('asignacionArray', { 
+                  id, 
+                  index,
+                  exp: crearNodo('binaria', { op: '+', izq: crearNodo('accesoVector', {id, index}), der: exp })
+                })
+              } else if (op === "-=") {
+                return crearNodo('asignacionArray', { 
+                  id, 
+                  index,
+                  exp: crearNodo('binaria', { op: '-', izq: crearNodo('accesoVector', {id, index}), der: exp })
+                })
+              } else {
+                return crearNodo('asignacionArray', { id, index, exp })
+              }
+            }
+          / id:Identificador _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
+              if (op === "+=") {
+                return crearNodo('asignacion', { 
+                  id, 
+                  exp: crearNodo('binaria', { op: '+', izq: crearNodo('accesoVar', {id}), der: exp })
+                })
+              } else if (op === "-=") {
+                return crearNodo('asignacion', { 
+                  id, 
+                  exp: crearNodo('binaria', { op: '-', izq: crearNodo('accesoVar', {id}), der: exp })
+                })
+              } else {
+                return crearNodo('asignacion', { id, exp })
+              }
+            }
           / TernaryOp
 
 TernaryOp = cond:OperacionOr _ "?" _ expTrue:Expresion _ ":" _ expFalse:Expresion { return crearNodo('ternario', { condicion:cond, expTrue, expFalse }) }
@@ -221,6 +255,7 @@ Nativo = [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: 
         / "'" . "'" { return crearNodo('nativo', { tipo: 'char', valor: text().charAt(1) }) }
         / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
         / "[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
+        / id:Identificador _ "[" _ index:Expresion _ "]" { return crearNodo('accesoVector', {id, index}) }
         / id:Identificador { return crearNodo('accesoVar', {id}) }
 
 _ = ([ \t\n\r] / Comments)*
