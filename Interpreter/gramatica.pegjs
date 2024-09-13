@@ -239,8 +239,17 @@ OperacionM = izq:UnariOp  expansion:( _ op:("/" / "*" / "%") _ der:UnariOp {retu
 }   
 
 UnariOp = tipo:("!" / "-") _ exp:UnariOp { return crearNodo('unaria', { op:tipo, exp})}
-        / Call
+        / Call2
 
+
+Call2 = callee:Call _ params:( _ args:Argumentos _ { return args })* {
+  return params.reduce(
+    (callee, args) => {
+      return crearNodo('llamada', { callee, args: args || [] })
+    },
+    callee
+  )
+}
 
 Call = callee:Nativo _  params:("(" _ args:Argumentos? _ ")" { return args })* {
   return params.reduce(
