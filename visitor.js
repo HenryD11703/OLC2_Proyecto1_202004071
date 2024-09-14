@@ -99,6 +99,9 @@
 
  * @typedef {import('./nodos').Funcion} Funcion
 
+
+ * @typedef {import('./nodos').Typeof} Typeof
+
  */
 
 
@@ -403,6 +406,15 @@ export class BaseVisitor {
      */
     visitFuncion(node) {
         throw new Error('Metodo visitFuncion no implementado');
+    }
+    
+
+    /**
+     * @param {Typeof} node
+     * @returns {any}
+     */
+    visitTypeof(node) {
+        throw new Error('Metodo visitTypeof no implementado');
     }
     
 }

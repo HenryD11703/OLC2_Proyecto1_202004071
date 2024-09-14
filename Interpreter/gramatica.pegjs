@@ -34,7 +34,8 @@
       'indexof': nodos.IndexOf,
       'length': nodos.Length,
       'join': nodos.Join,
-      'funcion': nodos.Funcion
+      'funcion': nodos.Funcion,
+      'typeof': nodos.Typeof
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -242,14 +243,15 @@ UnariOp = tipo:("!" / "-") _ exp:UnariOp { return crearNodo('unaria', { op:tipo,
         / Call
 
 
-Call = callee:Nativo _  params:("(" _ args:Argumentos? _ ")" { return args })* {
-  return params.reduce(
-    (callee, args) => {
-      return crearNodo('llamada', { callee, args: args || [] })
-    },
-    callee
-  )
-}
+Call = "typeof" _ exp:Nativo { return crearNodo('typeof', {exp}) }
+    / callee:Nativo _  params:("(" _ args:Argumentos? _ ")" { return args })* {
+      return params.reduce(
+        (callee, args) => {
+          return crearNodo('llamada', { callee, args: args || [] })
+        },
+        callee
+      )
+    }
 
 
 Argumentos = arg:Expresion args:( _ "," _ exp:Expresion { return exp })* { return [arg, ...args] }

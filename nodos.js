@@ -1125,4 +1125,29 @@ export class Funcion extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion }
+export class Typeof extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.exp Expresion que representa el valor
+    */
+    constructor({ exp }) {
+        super();
+        
+        /**
+         * Expresion que representa el valor
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitTypeof(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof }

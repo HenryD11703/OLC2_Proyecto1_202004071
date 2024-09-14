@@ -1,0 +1,68 @@
+// Variables globales
+int globalEntero = 100;
+string globalCadena = "Global";
+
+// Definición de función para concatenar cadenas
+string concatenarCadenas(string cadena1, string cadena2) {
+    return cadena1 + " " + cadena2;
+}
+
+
+{
+    // Bloque 1: Variables locales
+    int localEntero = 50;
+    string localCadena = "Local";
+    boolean condicion = true;
+
+    // Uso de variables locales y globales
+    System.out.println("Global entero:", globalEntero);
+    System.out.println("Local entero:", localEntero);
+    System.out.println("Global cadena:", globalCadena);
+    System.out.println("Local cadena:", localCadena);
+
+    // If-else dentro del bloque
+    if (condicion) {
+        System.out.println("Condición es verdadera en Bloque 1");
+    } else {
+        System.out.println("Condición es falsa en Bloque 1");
+    }
+
+    // Acceso a una función con ámbito local
+    string resultado = concatenarCadenas("Hola", localCadena);
+    System.out.println("Resultado de concatenación en Bloque 1:", resultado);
+}
+
+{
+    // Bloque 2: Nuevas variables locales que sobrescriben nombres globales
+    int globalEntero = 200;  // Sombreado de variable global
+    string localCadena = "Bloque 2";
+
+    // Ciclo for-each dentro de este bloque
+    int[] enteros = {10, 20, 30};
+    for (int num : enteros) {
+        System.out.println("Número en bloque 2:", num);
+    }
+
+    // Sombreado de la variable global
+    System.out.println("Global entero sombreado en Bloque 2:", globalEntero);
+    System.out.println("Local cadena en Bloque 2:", localCadena);
+
+    // Llamada a función que depende de la variable global no sombreada
+    string resultado = concatenarCadenas("Adiós", globalCadena);  // Usa la global real
+    System.out.println("Resultado de concatenación en Bloque 2:", resultado);
+}
+
+
+// Bloque final que muestra resultados globales y actualizaciones
+{
+    globalEntero += 50;  // Modificación de la variable global
+    System.out.println("Global entero modificado:", globalEntero);
+
+    if (globalEntero > 150) {
+        System.out.println("El valor del globalEntero es mayor a 150");
+    }
+
+    // Uso de función embebida
+    var fechaActual = time();
+    System.out.println("Fecha actual:", fechaActual);
+}
