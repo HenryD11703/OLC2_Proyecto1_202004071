@@ -673,21 +673,16 @@ export class InterpretarVisitor extends BaseVisitor {
         const funcionObj = node.callee.accept(this);
         const argumentos = node.args.map((arg) => arg.accept(this));
 
-        console.log("Funcion: " + funcionObj);
-        console.log("Argumentos: " + argumentos);
-        
-
-        if (!(funcionObj instanceof LlamadaFunc)) {
-            this.consola += `Error: '${node.callee.id}' no es una funcion\n`;
+        if (funcionObj.tipo instanceof LlamadaFunc) {
+            // Es una función nativa
+            return funcionObj.tipo.invocar(this, argumentos);
+        } else if (typeof funcionObj.valor === 'function') {
+            // Es una función regular
+            return funcionObj.valor(...argumentos);
+        } else {
+            this.consola += `Error: '${node.callee}' no es una función\n`;
             return { tipo: null, valor: null };
         }
-
-        if (funcionObj.aridad() !== argumentos.length) {
-            this.consola += `Error: '${node.callee.id}' requiere ${funcionObj.aridad()} argumentos, se dieron ${argumentos.length}\n`;
-            return { tipo: null, valor: null };
-        }
-
-        return funcionObj.invocar(this, argumentos);
     }
 
     /**
@@ -1072,13 +1067,16 @@ export class InterpretarVisitor extends BaseVisitor {
         return { tipo: 'string', valor: resultado };
     }
 
+    /*
+     TODO: Arreglar la asignacion a una variable que ya fue declarada
+     TODO: Arreglar la asignacion de un vector ya declarado a otro
+     */
+
     /**
      * @type {BaseVisitor['visitFuncion']}
      */
     visitFuncion(node) {
         const funcion = new funcionesForaneas(node.id, node.params, node.bloque);
-        console.log(funcion);
-        this.entornoActual.agregarVariable(node.id, { tipo: 'funcion', valor: funcion });
     }
 
 }
