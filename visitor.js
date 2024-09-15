@@ -105,6 +105,9 @@
 
  * @typedef {import('./nodos').Matrix} Matrix
 
+
+ * @typedef {import('./nodos').MatrixSimple} MatrixSimple
+
  */
 
 
@@ -427,6 +430,15 @@ export class BaseVisitor {
      */
     visitMatrix(node) {
         throw new Error('Metodo visitMatrix no implementado');
+    }
+    
+
+    /**
+     * @param {MatrixSimple} node
+     * @returns {any}
+     */
+    visitMatrixSimple(node) {
+        throw new Error('Metodo visitMatrixSimple no implementado');
     }
     
 }

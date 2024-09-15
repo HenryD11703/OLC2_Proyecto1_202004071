@@ -36,7 +36,8 @@
       'join': nodos.Join,
       'funcion': nodos.Funcion,
       'typeof': nodos.Typeof,
-      'matrix': nodos.Matrix
+      'matrix': nodos.Matrix,
+      'matrixSimple': nodos.MatrixSimple
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -69,8 +70,12 @@ Declaracion = dcl:Variable _ { return dcl }
             / func:FuncDcl _ { return func }
             / stmt:Statement _ { return stmt }
 
-// a matriz solo se accedera cuando tenga dos [][] y puede tener hasta n cantidad de dimensiones
+// la matriz solo se accedera cuando tenga dos [][] y puede tener hasta n cantidad de dimensiones
+// La matriz tambien puede ser declarada de esta manera
+// int[][][] matriz = new int[2][2][2];
+
 Matrix = tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ dimensiones:( _ "[" _ "]" _ )+ _ id:Identificador _ "=" _ "{" _ valores:ListaMatrix _ "}" _ ";"  { return crearNodo('matrix', { tipo, id, valores, dimensiones: dimensiones.length }) }
+       / tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ dimensiones:( _ "[" _ "]" _ )+ _ id:Identificador _ "=" _ "new" _ tipo2:("int" / "float" / "string" / "boolean" / "char") _ "[" _ tam:Expresion _ "]" _ tamaños:( _ "[" _ tam2:Expresion _ "]" _ { return tam2 })* _ ";" { return crearNodo('matrixSimple', { tipo, dimensiones: dimensiones.length, id, tipo2, tamaño1: tam, tamaños }) }
 
 
 
@@ -80,6 +85,9 @@ Matrix = tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ di
 // int[][][][] mtx3 = { { { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} }, { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} } }, { { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} }, { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} } } };
 
 // int[][][] matriz = {{ {1 , 2 } , { 3 , 4 } } , { { 5 , 6 } , { 7, 8 }}};
+
+
+
 ListaMatrix = _ "{" _ valores:ListaMatrix _ "}" _ otro:("," _ "{" _ otroValor:ListaMatrix _ "}" _ { return otroValor })* { return [valores, ...otro] }
             /  valores:Argumentos { return valores }
 

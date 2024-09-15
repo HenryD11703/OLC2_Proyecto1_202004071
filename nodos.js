@@ -1199,4 +1199,69 @@ export class Matrix extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix }
+export class MatrixSimple extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo de la matriz
+ * @param {number} options.dimensiones Dimensiones de la matriz
+ * @param {string} options.id Identificador de la matriz
+ * @param {string} options.tipo2 Tipo de los elementos de la matriz
+ * @param {number} options.tamaño1 Tamaño de la primera dimension de la matriz
+ * @param {number[]} options.tamaños Tamaños de las dimensiones adicionales de la matriz
+    */
+    constructor({ tipo, dimensiones, id, tipo2, tamaño1, tamaños }) {
+        super();
+        
+        /**
+         * Tipo de la matriz
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Dimensiones de la matriz
+         * @type {number}
+        */
+        this.dimensiones = dimensiones;
+
+
+        /**
+         * Identificador de la matriz
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Tipo de los elementos de la matriz
+         * @type {string}
+        */
+        this.tipo2 = tipo2;
+
+
+        /**
+         * Tamaño de la primera dimension de la matriz
+         * @type {number}
+        */
+        this.tamaño1 = tamaño1;
+
+
+        /**
+         * Tamaños de las dimensiones adicionales de la matriz
+         * @type {number[]}
+        */
+        this.tamaños = tamaños;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitMatrixSimple(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix, MatrixSimple }

@@ -1127,4 +1127,48 @@ export class InterpretarVisitor extends BaseVisitor {
     this.entornoActual.agregarVariable(id, `${tipo}[]`.repeat(dimensiones), valoresInterpretados);
   }
 
+  /**
+   * @type {BaseVisitor['visitMatrixSimple']}
+   */
+  visitMatrixSimple(node) {
+      const tipo = node.tipo;
+      const dimensiones = node.dimensiones + 1; // +1 para incluir la dimensión del vector 
+      const id = node.id;
+      const tipo2 = node.tipo2; // el segundo tipo despues de la declaracion, int[][] id = new int[2][2];
+      const size1 = node.tamaño1.accept(this);
+      const sizes = node.tamaños.map(size => size.accept(this));
+    
+
+      if (size1.tipo !== "int" || sizes.some(size => size.tipo !== "int")) {
+        this.consola += `Error: Todos los tamaños de la matriz deben ser enteros\n`;
+        return;
+      }
+
+      if (tipo !== tipo2) {
+        this.consola += `Error: El tipo ${tipo} y ${tipo2} deben ser iguales\n`;
+        return;
+      }
+    
+      const crearMatriz = (dims, index = 0) => {
+        if (index === dims.length) {
+          // Valor por defecto según el tipo
+          switch (tipo) {
+            case "int": return { tipo, valor: 0 };
+            case "float": return { tipo, valor: 0.0 };
+            case "string": return { tipo, valor: "" };
+            case "boolean": return { tipo, valor: false };
+            case "char": return { tipo, valor: "\u0000" };
+            default: return { tipo, valor: null };
+          }
+        }
+        return Array(dims[index].valor).fill().map(() => crearMatriz(dims, index + 1));
+      };
+
+      const matriz = crearMatriz([size1, ...sizes]);
+
+      console.log( `${tipo}[]`.repeat(dimensiones), matriz);
+
+      this.entornoActual.agregarVariable(id, `${tipo}[]`.repeat(dimensiones), matriz);
+  }
+
 }
