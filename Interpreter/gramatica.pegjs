@@ -71,6 +71,9 @@ Declaracion = dcl:Variable _ { return dcl }
             / array:Array _ { return array }
             / func:FuncDcl _ { return func }
             / stmt:Statement _ { return stmt }
+            / struct:Struct _ { return struct }
+
+Struct = "struct" _ id:Identificador _ "{" _ dcls:Declaracion* _ "}" _ ";" 
 
 // la matriz solo se accedera cuando tenga dos [][] y puede tener hasta n cantidad de dimensiones
 // La matriz tambien puede ser declarada de esta manera

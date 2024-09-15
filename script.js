@@ -1,6 +1,9 @@
 import { InterpretarVisitor } from "./Interpreter/Interprete.js";
 import { parse } from "./Interpreter/gramatica.js";
 
+
+
+
 // Definición inicial de las pestañas
 const tabs = [
     { name: 'Pestaña 1', content: '\n \n \n \n \n \n \n \n \n \n \n' }
@@ -106,6 +109,10 @@ loadFileInput.addEventListener('change', function(event) {
     }
 });
 
+
+
+
+
 // Evento para interpretar el contenido de la pestaña activa
 Interpretar.onclick = () => {
     const activeIndex = Array.from(document.getElementsByClassName('tab-button'))
@@ -117,6 +124,8 @@ Interpretar.onclick = () => {
         consoleEditor.setValue(activeEditor.getValue()); */
 
         const activeEditor = editors[activeIndex];
+
+        
 
         
         const codigo = activeEditor.getValue();
