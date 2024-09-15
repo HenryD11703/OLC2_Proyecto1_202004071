@@ -37,7 +37,9 @@
       'funcion': nodos.Funcion,
       'typeof': nodos.Typeof,
       'matrix': nodos.Matrix,
-      'matrixSimple': nodos.MatrixSimple
+      'matrixSimple': nodos.MatrixSimple,
+      'asignacionMatrix': nodos.AsignacionMatrix,
+      'accesoMatrix': nodos.AccesoMatrix
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -158,7 +160,11 @@ Identificador = [a-zA-Z_][a-zA-Z0-9_]* { return text() }
 
 Expresion = Asignacion
 
-Asignacion = id:Identificador _ "[" _ index:Expresion _ "]" _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
+Asignacion = id:Identificador _ "[" _ index:Expresion _ "]" indexA:( _ "[" _ index2:Expresion _ "]" { return index2 })+ _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
+
+                return crearNodo('asignacionMatrix', { id, index, indexA, exp })
+            }
+          / id:Identificador _ "[" _ index:Expresion _ "]" _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
               if (op === "+=") {
                 return crearNodo('asignacionArray', { 
                   id, 
@@ -295,6 +301,7 @@ Nativo = [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: 
         / "'" . "'" { return crearNodo('nativo', { tipo: 'char', valor: text().charAt(1) }) }
         / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
         / "[" _ exp:Expresion _ "]" { return crearNodo('agrupacion', { exp }) }
+        / id:Identificador _ "[" _ index:Expresion _ "]" _ indices:( _ "[" _ index2:Expresion _ "]" { return index2 })+ { return crearNodo('accesoMatrix', {id, index, indices}) }
         / id:Identificador _ "[" _ index:Expresion _ "]" { return crearNodo('accesoVector', {id, index}) }
         / id:Identificador ".indexOf(" _ exp:Expresion _ ")" { return crearNodo('indexof', {id, exp}) }
         / id:Identificador ".join(" _ ")" { return crearNodo('join', {id}) }

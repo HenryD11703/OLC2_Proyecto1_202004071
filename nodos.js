@@ -1264,4 +1264,94 @@ export class MatrixSimple extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix, MatrixSimple }
+export class AsignacionMatrix extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del array
+ * @param {Expresion} options.index Expresion que representa el primer indice del array
+ * @param {number[]} options.indexA Indices adicionales del array
+ * @param {Expresion} options.exp Expresion que representa el valor a asignar
+    */
+    constructor({ id, index, indexA, exp }) {
+        super();
+        
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Expresion que representa el primer indice del array
+         * @type {Expresion}
+        */
+        this.index = index;
+
+
+        /**
+         * Indices adicionales del array
+         * @type {number[]}
+        */
+        this.indexA = indexA;
+
+
+        /**
+         * Expresion que representa el valor a asignar
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitAsignacionMatrix(this);
+    }
+}
+    
+export class AccesoMatrix extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del array
+ * @param {Expresion} options.index Expresion que representa el primer indice del array
+ * @param {number[]} options.indices Indices adicionales del array
+    */
+    constructor({ id, index, indices }) {
+        super();
+        
+        /**
+         * Identificador del array
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Expresion que representa el primer indice del array
+         * @type {Expresion}
+        */
+        this.index = index;
+
+
+        /**
+         * Indices adicionales del array
+         * @type {number[]}
+        */
+        this.indices = indices;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitAccesoMatrix(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix, MatrixSimple, AsignacionMatrix, AccesoMatrix }

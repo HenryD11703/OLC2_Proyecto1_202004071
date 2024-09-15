@@ -108,6 +108,12 @@
 
  * @typedef {import('./nodos').MatrixSimple} MatrixSimple
 
+
+ * @typedef {import('./nodos').AsignacionMatrix} AsignacionMatrix
+
+
+ * @typedef {import('./nodos').AccesoMatrix} AccesoMatrix
+
  */
 
 
@@ -439,6 +445,24 @@ export class BaseVisitor {
      */
     visitMatrixSimple(node) {
         throw new Error('Metodo visitMatrixSimple no implementado');
+    }
+    
+
+    /**
+     * @param {AsignacionMatrix} node
+     * @returns {any}
+     */
+    visitAsignacionMatrix(node) {
+        throw new Error('Metodo visitAsignacionMatrix no implementado');
+    }
+    
+
+    /**
+     * @param {AccesoMatrix} node
+     * @returns {any}
+     */
+    visitAccesoMatrix(node) {
+        throw new Error('Metodo visitAccesoMatrix no implementado');
     }
     
 }

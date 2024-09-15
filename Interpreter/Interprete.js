@@ -546,17 +546,17 @@ export class InterpretarVisitor extends BaseVisitor {
     this.continuePrevio = node.incremento;
     // La idea aca es basicamente hacer un nodo while traduciendo el for a su estructura
     /*
-        Por ejemplo:
-        for (var i=0; i<10; i=i+1) print i;
-            Se traduce a:
-            {
-                var i = 0;
-                while(i<10){
-                    print i;
-                    i= i + 1;
-                }
-            }
-        */
+          Por ejemplo:
+          for (var i=0; i<10; i=i+1) print i;
+              Se traduce a:
+              {
+                  var i = 0;
+                  while(i<10){
+                      print i;
+                      i= i + 1;
+                  }
+              }
+          */
     const funcFor = new nodos.Bloque({
       dcls: [
         node.inicial,
@@ -670,12 +670,12 @@ export class InterpretarVisitor extends BaseVisitor {
 
   /*
 
-  System.out.println(typeof(12)); // "int"
-  System.out.println(typeof(12.3)); // "float"
-  System.out.println(typeof("asdf")); // "string"
-  System.out.println(typeof('A')); // "char"
-  System.out.println(typeof(true)); // "boolean"
-  */
+    System.out.println(typeof(12)); // "int"
+    System.out.println(typeof(12.3)); // "float"
+    System.out.println(typeof("asdf")); // "string"
+    System.out.println(typeof('A')); // "char"
+    System.out.println(typeof(true)); // "boolean"
+    */
 
   visitLlamada(node) {
     const funcionObj = node.callee.accept(this);
@@ -706,7 +706,6 @@ export class InterpretarVisitor extends BaseVisitor {
     }
     const arrayTipo = `${tipo}[]`; // Representación del tipo de array
     const arrayValor = valores.map((v) => ({ tipo: v.tipo, valor: v.valor }));
-
 
     this.entornoActual.agregarVariable(nombre, arrayTipo, arrayValor);
   }
@@ -892,32 +891,32 @@ export class InterpretarVisitor extends BaseVisitor {
   visitForeach(node) {
     // La idea aca es basicamente hacer un nodo while traduciendo el for a su estructura
     /*
-        Por ejemplo:
-        for (var i=0; i<10; i=i+1) print i;
-            Se traduce a:
-            {
-                var i = 0;
-                while(i<10){
-                    print i;
-                    i= i + 1;
-                }
-            }
-        */
+          Por ejemplo:
+          for (var i=0; i<10; i=i+1) print i;
+              Se traduce a:
+              {
+                  var i = 0;
+                  while(i<10){
+                      print i;
+                      i= i + 1;
+                  }
+              }
+          */
     // Pero aplicado a un foreach que en js seria traducirlo a algo asi
     /*
-        for ( int numero : arreglo ) {
-            Sentencias
-        }
-            Se traduce a:
-            {
-                var indice = 0;
-                while(indice < arreglo.length){
-                    var numero = arreglo[indice];
-                    Sentencias
-                    indice = indice + 1;
-                }
-            }
-        */
+          for ( int numero : arreglo ) {
+              Sentencias
+          }
+              Se traduce a:
+              {
+                  var indice = 0;
+                  while(indice < arreglo.length){
+                      var numero = arreglo[indice];
+                      Sentencias
+                      indice = indice + 1;
+                  }
+              }
+          */
 
     // crearNodo('foreach', { tipo, id, exp, bloque:stmt }) }
 
@@ -1073,8 +1072,8 @@ export class InterpretarVisitor extends BaseVisitor {
   }
 
   /*
-     TODO: Arreglar la asignacion a una variable que ya fue declarada
-     */
+      TODO: Arreglar la asignacion a una variable que ya fue declarada
+      */
 
   /**
    * @type {BaseVisitor['visitFuncion']}
@@ -1084,14 +1083,13 @@ export class InterpretarVisitor extends BaseVisitor {
     this.entornoActual.agregarVariable(node.id, funcion);
   }
 
-
   /**
    * @type {BaseVisitor['visitTypeof']}
    */
   visitTypeof(node) {
     const exp = node.exp.accept(this);
     if (exp.tipo === null) {
-      return { tipo: null , valor: null };
+      return { tipo: null, valor: null };
     }
     return { tipo: "string", valor: exp.tipo };
   }
@@ -1100,17 +1098,16 @@ export class InterpretarVisitor extends BaseVisitor {
    * @type {BaseVisitor['visitMatrix']}
    */
   visitMatrix(node) {
-      const tipo = node.tipo;
-      const id = node.id;
-      const dimensiones = node.dimensiones + 1; // +1 para incluir la dimensión del vector 
-      const valores = node.valores;
+    const tipo = node.tipo;
+    const id = node.id;
+    const dimensiones = node.dimensiones + 1; // +1 para incluir la dimensión del vector
+    const valores = node.valores;
 
-     // se tiene que hacer el accept(this) dentro de cada elemento del arreglo, para que se pueda obtener el tipo y el valor y asi hacer el arreglo ya interpretado
-     // con un for each para interpretar cada elemento de cada arreglo de cada dimension que se tenga
+    // se tiene que hacer el accept(this) dentro de cada elemento del arreglo, para que se pueda obtener el tipo y el valor y asi hacer el arreglo ya interpretado
+    // con un for each para interpretar cada elemento de cada arreglo de cada dimension que se tenga
 
-   
-     const interpretarArray = (arr) => {
-      return arr.map(elem => {
+    const interpretarArray = (arr) => {
+      return arr.map((elem) => {
         if (Array.isArray(elem)) {
           return interpretarArray(elem);
         } else {
@@ -1121,54 +1118,176 @@ export class InterpretarVisitor extends BaseVisitor {
 
     // validar el tipo de cada elemento con el tipo del array
     // luego verificar la cantidad de dimensiones sea apropiada
-  
+
     const valoresInterpretados = interpretarArray(valores);
-  
-    this.entornoActual.agregarVariable(id, `${tipo}[]`.repeat(dimensiones), valoresInterpretados);
+
+    this.entornoActual.agregarVariable(
+      id,
+      `${tipo}[]`.repeat(dimensiones),
+      valoresInterpretados
+    );
   }
 
   /**
    * @type {BaseVisitor['visitMatrixSimple']}
    */
   visitMatrixSimple(node) {
-      const tipo = node.tipo;
-      const dimensiones = node.dimensiones + 1; // +1 para incluir la dimensión del vector 
-      const id = node.id;
-      const tipo2 = node.tipo2; // el segundo tipo despues de la declaracion, int[][] id = new int[2][2];
-      const size1 = node.tamaño1.accept(this);
-      const sizes = node.tamaños.map(size => size.accept(this));
-    
+    const tipo = node.tipo;
+    const dimensiones = node.dimensiones + 1; // +1 para incluir la dimensión del vector
+    const id = node.id;
+    const tipo2 = node.tipo2; // el segundo tipo despues de la declaracion, int[][] id = new int[2][2];
+    const size1 = node.tamaño1.accept(this);
+    const sizes = node.tamaños.map((size) => size.accept(this));
 
-      if (size1.tipo !== "int" || sizes.some(size => size.tipo !== "int")) {
-        this.consola += `Error: Todos los tamaños de la matriz deben ser enteros\n`;
-        return;
-      }
+    if (size1.tipo !== "int" || sizes.some((size) => size.tipo !== "int")) {
+      this.consola += `Error: Todos los tamaños de la matriz deben ser enteros\n`;
+      return;
+    }
 
-      if (tipo !== tipo2) {
-        this.consola += `Error: El tipo ${tipo} y ${tipo2} deben ser iguales\n`;
-        return;
-      }
-    
-      const crearMatriz = (dims, index = 0) => {
-        if (index === dims.length) {
-          // Valor por defecto según el tipo
-          switch (tipo) {
-            case "int": return { tipo, valor: 0 };
-            case "float": return { tipo, valor: 0.0 };
-            case "string": return { tipo, valor: "" };
-            case "boolean": return { tipo, valor: false };
-            case "char": return { tipo, valor: "\u0000" };
-            default: return { tipo, valor: null };
-          }
+    if (tipo !== tipo2) {
+      this.consola += `Error: El tipo ${tipo} y ${tipo2} deben ser iguales\n`;
+      return;
+    }
+
+    const crearMatriz = (dims, index = 0) => {
+      if (index === dims.length) {
+        // Valor por defecto según el tipo
+        switch (tipo) {
+          case "int":
+            return { tipo, valor: 0 };
+          case "float":
+            return { tipo, valor: 0.0 };
+          case "string":
+            return { tipo, valor: "" };
+          case "boolean":
+            return { tipo, valor: false };
+          case "char":
+            return { tipo, valor: "\u0000" };
+          default:
+            return { tipo, valor: null };
         }
-        return Array(dims[index].valor).fill().map(() => crearMatriz(dims, index + 1));
-      };
+      }
+      return Array(dims[index].valor)
+        .fill()
+        .map(() => crearMatriz(dims, index + 1));
+    };
 
-      const matriz = crearMatriz([size1, ...sizes]);
+    const matriz = crearMatriz([size1, ...sizes]);
 
-      console.log( `${tipo}[]`.repeat(dimensiones), matriz);
+    console.log(`${tipo}[]`.repeat(dimensiones), matriz);
 
-      this.entornoActual.agregarVariable(id, `${tipo}[]`.repeat(dimensiones), matriz);
+    this.entornoActual.agregarVariable(
+      id,
+      `${tipo}[]`.repeat(dimensiones),
+      matriz
+    );
+  }
+
+  /**
+   * @type {BaseVisitor['visitAsignacionMatrix']}
+   */
+  visitAsignacionMatrix(node) {
+    const id = node.id;
+    const index1 = node.index.accept(this);
+    const indices = node.indexA.map((index) => index.accept(this));
+    const exp = node.exp.accept(this);
+  
+    if (!this.entornoActual.verificarVariableExiste(id)) {
+      this.consola += `Error: variable '${id}' no declarada\n`;
+      return { tipo: null, valor: null };
+    }
+  
+    const variable = this.entornoActual.obtenerValorVariable(id);
+  
+    if (!variable.tipo.endsWith("[]")) {
+      this.consola += `Error: '${id}' no es una matriz\n`;
+      return { tipo: null, valor: null };
+    }
+  
+    const dimensiones = variable.tipo.split("[]").length - 1;
+    if (dimensiones !== indices.length + 1) {
+      this.consola += `Error: número incorrecto de índices para la matriz '${id}'\n`;
+      return { tipo: null, valor: null };
+    }
+  
+    let current = variable.valor;
+    const allIndices = [index1, ...indices];
+  
+    for (let i = 0; i < allIndices.length - 1; i++) {
+      if (allIndices[i].tipo !== "int") {
+        this.consola += `Error: el índice debe ser un entero\n`;
+        return { tipo: null, valor: null };
+      }
+      if (allIndices[i].valor < 0 || allIndices[i].valor >= current.length) {
+        this.consola += `Error: índice fuera de rango\n`;
+        return { tipo: null, valor: null };
+      }
+      current = current[allIndices[i].valor];
+    }
+  
+    const lastIndex = allIndices[allIndices.length - 1];
+    if (lastIndex.tipo !== "int") {
+      this.consola += `Error: el índice debe ser un entero\n`;
+      return { tipo: null, valor: null };
+    }
+    if (lastIndex.valor < 0 || lastIndex.valor >= current.length) {
+      this.consola += `Error: índice fuera de rango\n`;
+      return { tipo: null, valor: null };
+    }
+    
+
+  
+    current[lastIndex.valor] = { tipo: exp.tipo, valor: exp.valor }; // Se sobreescribe el valor en la posición correspondiente
+
+    this.entornoActual.asignarValorVariable(id, variable.valor);
+
+    console.log(this.entornoActual.variables);
+
+    return { tipo: exp.tipo, valor: exp.valor }; // se retorna por que la asignacion retorna algo xd 
+  }
+
+  /**
+   * @type {BaseVisitor['visitAccesoMatrix']}
+   */
+  visitAccesoMatrix(node) {
+    const id = node.id;
+    const index1 = node.index.accept(this);
+    const indices = node.indices.map((index) => index.accept(this));
+  
+    if (!this.entornoActual.verificarVariableExiste(id)) {
+      this.consola += `Error: variable '${id}' no declarada\n`;
+      return { tipo: null, valor: null };
+    }
+  
+    const variable = this.entornoActual.obtenerValorVariable(id);
+  
+    if (!variable.tipo.endsWith("[]")) {
+      this.consola += `Error: '${id}' no es una matriz\n`;
+      return { tipo: null, valor: null };
+    }
+  
+    const dimensiones = variable.tipo.split("[]").length - 1;
+    if (dimensiones !== indices.length + 1) {
+      this.consola += `Error: número incorrecto de índices para la matriz '${id}'\n`;
+      return { tipo: null, valor: null };
+    }
+  
+    let current = variable.valor;
+    const allIndices = [index1, ...indices];
+  
+    for (let i = 0; i < allIndices.length; i++) {
+      if (allIndices[i].tipo !== "int") {
+        this.consola += `Error: el índice debe ser un entero\n`;
+        return { tipo: null, valor: null };
+      }
+      if (allIndices[i].valor < 0 || allIndices[i].valor >= current.length) {
+        this.consola += `Error: índice fuera de rango\n`;
+        return { tipo: null, valor: null };
+      }
+      current = current[allIndices[i].valor];
+    }
+  
+    return current; // This will be the element at the given position
   }
 
 }
