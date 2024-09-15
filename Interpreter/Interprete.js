@@ -707,6 +707,7 @@ export class InterpretarVisitor extends BaseVisitor {
     const arrayTipo = `${tipo}[]`; // Representación del tipo de array
     const arrayValor = valores.map((v) => ({ tipo: v.tipo, valor: v.valor }));
 
+
     this.entornoActual.agregarVariable(nombre, arrayTipo, arrayValor);
   }
 
@@ -835,8 +836,6 @@ export class InterpretarVisitor extends BaseVisitor {
 
   /**
    * @type {BaseVisitor['visitAsignacionArray']}
-   * * Asignar un valor a un elemento del array en una posición específica
-   * * array[0] = 10;
    */
   visitAsignacionArray(node) {
     const nombre = node.id;
@@ -1106,11 +1105,6 @@ export class InterpretarVisitor extends BaseVisitor {
       const dimensiones = node.dimensiones + 1; // +1 para incluir la dimensión del vector 
       const valores = node.valores;
 
-      console.log('Tipo: ', tipo);
-      console.log('ID: ', id);
-      console.log('Dimensiones: ', dimensiones);
-      console.log('Valores: ', valores);
-
      // se tiene que hacer el accept(this) dentro de cada elemento del arreglo, para que se pueda obtener el tipo y el valor y asi hacer el arreglo ya interpretado
      // con un for each para interpretar cada elemento de cada arreglo de cada dimension que se tenga
 
@@ -1124,10 +1118,13 @@ export class InterpretarVisitor extends BaseVisitor {
         }
       });
     };
+
+    // validar el tipo de cada elemento con el tipo del array
+    // luego verificar la cantidad de dimensiones sea apropiada
   
     const valoresInterpretados = interpretarArray(valores);
   
-    console.log('Valores interpretados: ', valoresInterpretados);
+    this.entornoActual.agregarVariable(id, `${tipo}[]`.repeat(dimensiones), valoresInterpretados);
   }
 
 }
