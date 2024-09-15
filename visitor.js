@@ -102,6 +102,9 @@
 
  * @typedef {import('./nodos').Typeof} Typeof
 
+
+ * @typedef {import('./nodos').Matrix} Matrix
+
  */
 
 
@@ -415,6 +418,15 @@ export class BaseVisitor {
      */
     visitTypeof(node) {
         throw new Error('Metodo visitTypeof no implementado');
+    }
+    
+
+    /**
+     * @param {Matrix} node
+     * @returns {any}
+     */
+    visitMatrix(node) {
+        throw new Error('Metodo visitMatrix no implementado');
     }
     
 }

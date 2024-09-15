@@ -1150,4 +1150,53 @@ export class Typeof extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof }
+export class Matrix extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo de la matriz
+ * @param {string} options.id Identificador de la matriz
+ * @param {Expresion[]} options.valores Valores de la matriz
+ * @param {number} options.dimensiones Dimensiones de la matriz
+    */
+    constructor({ tipo, id, valores, dimensiones }) {
+        super();
+        
+        /**
+         * Tipo de la matriz
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador de la matriz
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Valores de la matriz
+         * @type {Expresion[]}
+        */
+        this.valores = valores;
+
+
+        /**
+         * Dimensiones de la matriz
+         * @type {number}
+        */
+        this.dimensiones = dimensiones;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitMatrix(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix }

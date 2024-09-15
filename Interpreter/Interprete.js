@@ -1097,4 +1097,37 @@ export class InterpretarVisitor extends BaseVisitor {
     return { tipo: "string", valor: exp.tipo };
   }
 
+  /**
+   * @type {BaseVisitor['visitMatrix']}
+   */
+  visitMatrix(node) {
+      const tipo = node.tipo;
+      const id = node.id;
+      const dimensiones = node.dimensiones + 1; // +1 para incluir la dimensión del vector 
+      const valores = node.valores;
+
+      console.log('Tipo: ', tipo);
+      console.log('ID: ', id);
+      console.log('Dimensiones: ', dimensiones);
+      console.log('Valores: ', valores);
+
+     // se tiene que hacer el accept(this) dentro de cada elemento del arreglo, para que se pueda obtener el tipo y el valor y asi hacer el arreglo ya interpretado
+     // con un for each para interpretar cada elemento de cada arreglo de cada dimension que se tenga
+
+   
+     const interpretarArray = (arr) => {
+      return arr.map(elem => {
+        if (Array.isArray(elem)) {
+          return interpretarArray(elem);
+        } else {
+          return elem.accept(this);
+        }
+      });
+    };
+  
+    const valoresInterpretados = interpretarArray(valores);
+  
+    console.log('Valores interpretados: ', valoresInterpretados);
+  }
+
 }

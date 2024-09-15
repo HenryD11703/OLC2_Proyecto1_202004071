@@ -35,7 +35,8 @@
       'length': nodos.Length,
       'join': nodos.Join,
       'funcion': nodos.Funcion,
-      'typeof': nodos.Typeof
+      'typeof': nodos.Typeof,
+      'matrix': nodos.Matrix
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -63,9 +64,24 @@
 Codigo = _ dcl:Declaracion* _ { return dcl }
 
 Declaracion = dcl:Variable _ { return dcl }
+            / matrix:Matrix _ { return matrix }
             / array:Array _ { return array }
             / func:FuncDcl _ { return func }
             / stmt:Statement _ { return stmt }
+
+// a matriz solo se accedera cuando tenga dos [][] y puede tener hasta n cantidad de dimensiones
+Matrix = tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ dimensiones:( _ "[" _ "]" _ )+ _ id:Identificador _ "=" _ "{" _ valores:ListaMatrix _ "}" _ ";"  { return crearNodo('matrix', { tipo, id, valores, dimensiones: dimensiones.length }) }
+
+
+
+// las matrices tienen la siguiente estructura cuando se declaran
+// int[][] mtx1= { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };, por lo que cada valor de la matriz es un array y a su vez un array puede contener otra lista de arrays dentro
+// int[][][] mtx2 = { { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} }, { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} } }; o tambien
+// int[][][][] mtx3 = { { { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} }, { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} } }, { { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} }, { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} } } };
+
+// int[][][] matriz = {{ {1 , 2 } , { 3 , 4 } } , { { 5 , 6 } , { 7, 8 }}};
+ListaMatrix = _ "{" _ valores:ListaMatrix _ "}" _ otro:("," _ "{" _ otroValor:ListaMatrix _ "}" _ { return otroValor })* { return [valores, ...otro] }
+            /  valores:Argumentos { return valores }
 
 // La funcion puede tener parametros o no
 // La funcion puede ser de tipo normal o de tipo array, para indicar el tipo array se usa [] o tambien puede ser void el cual no retorna nada
