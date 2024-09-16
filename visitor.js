@@ -114,6 +114,9 @@
 
  * @typedef {import('./nodos').AccesoMatrix} AccesoMatrix
 
+
+ * @typedef {import('./nodos').Struct} Struct
+
  */
 
 
@@ -463,6 +466,15 @@ export class BaseVisitor {
      */
     visitAccesoMatrix(node) {
         throw new Error('Metodo visitAccesoMatrix no implementado');
+    }
+    
+
+    /**
+     * @param {Struct} node
+     * @returns {any}
+     */
+    visitStruct(node) {
+        throw new Error('Metodo visitStruct no implementado');
     }
     
 }

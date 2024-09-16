@@ -1354,4 +1354,37 @@ export class AccesoMatrix extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix, MatrixSimple, AsignacionMatrix, AccesoMatrix }
+export class Struct extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador del struct
+ * @param {Declaracion[]} options.dcls Declaraciones de variables del struct
+    */
+    constructor({ id, dcls }) {
+        super();
+        
+        /**
+         * Identificador del struct
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Declaraciones de variables del struct
+         * @type {Declaracion[]}
+        */
+        this.dcls = dcls;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitStruct(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix, MatrixSimple, AsignacionMatrix, AccesoMatrix, Struct }

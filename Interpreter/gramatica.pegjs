@@ -39,7 +39,8 @@
       'matrix': nodos.Matrix,
       'matrixSimple': nodos.MatrixSimple,
       'asignacionMatrix': nodos.AsignacionMatrix,
-      'accesoMatrix': nodos.AccesoMatrix
+      'accesoMatrix': nodos.AccesoMatrix,
+      'struct': nodos.Struct,
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -73,7 +74,25 @@ Declaracion = dcl:Variable _ { return dcl }
             / stmt:Statement _ { return stmt }
             / struct:Struct _ { return struct }
 
-Struct = "struct" _ id:Identificador _ "{" _ dcls:Declaracion* _ "}" _ ";" 
+
+// Problema: cuando se crea un struct se le pude poner otra propiedad que sea otro struct :(
+
+/*
+struct Mascota {
+  string nombre;
+  int edad;
+}
+
+struct Persona {
+  string nombre;
+  int edad;
+  Mascota mascota;
+}
+
+*/
+
+Struct = "struct" _ id:Identificador _ "{" _ dcls:Declaracion* _ "}"  ";"  { return crearNodo('struct', { id, dcls }) }
+
 
 // la matriz solo se accedera cuando tenga dos [][] y puede tener hasta n cantidad de dimensiones
 // La matriz tambien puede ser declarada de esta manera
@@ -119,8 +138,8 @@ Array = _ tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ i
 // donde solo se declara el tipo y el valor
 // y donde no se da un tipo sino que solo el valor
 Variable = _ tipo:("var") _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('typeLessDcl', { id, valor:exp }) }
-        /  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identificador _ ";"{ return crearNodo('simpleDcl', { tipo, id })}
-        /  _ tipo:("int" / "float" / "string" / "boolean" / "char") _ id:Identificador  _ "=" _ exp:Expresion _ ";"{ return crearNodo('declaracionVar', { tipo, id, valor:exp})}
+        /  _ tipo:("int" / "float" / "string" / "boolean" / "char" / Identificador) _ id:Identificador _ ";"{ return crearNodo('simpleDcl', { tipo, id })}
+        /  _ tipo:("int" / "float" / "string" / "boolean" / "char" / Identificador) _ id:Identificador  _ "=" _ exp:Expresion _ ";"{ return crearNodo('declaracionVar', { tipo, id, valor:exp})}
 
 // Statement = "System.out.println(" _ exp:Expresion ")" ";" { return crearNodo('print', {exp})}
 Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return crearNodo('print', {args})}

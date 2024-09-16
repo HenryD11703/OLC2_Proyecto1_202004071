@@ -9,6 +9,7 @@ import {
 import { LlamadaFunc } from "./llamadaFunc.js";
 import { embebidas } from "./funcEmbebidas.js";
 import { funcionesForaneas } from "./funcForaneas.js";
+import { Struct } from "./struct.js";
 
 export class InterpretarVisitor extends BaseVisitor {
   constructor() {
@@ -344,7 +345,6 @@ export class InterpretarVisitor extends BaseVisitor {
     // Verificar los tipos de valor y de tipo
     // tipo es la parte de la gramática y valor.tipo sería el tipo verdadero del dato
     // en tipo es int, float, string, boolean, char
-
     // Conversión implícita de int a float
     if (tipo === "float" && valor.tipo === "int") {
       this.entornoActual.agregarVariable(nombre, tipo, parseFloat(valor.valor));
@@ -1241,7 +1241,6 @@ export class InterpretarVisitor extends BaseVisitor {
 
     this.entornoActual.asignarValorVariable(id, variable.valor);
 
-    console.log(this.entornoActual.variables);
 
     return { tipo: exp.tipo, valor: exp.valor }; // se retorna por que la asignacion retorna algo xd 
   }
@@ -1288,6 +1287,17 @@ export class InterpretarVisitor extends BaseVisitor {
     }
   
     return current; // This will be the element at the given position
+  }
+
+  /**
+   * @type {BaseVisitor['visitStruct']}
+   */
+  visitStruct(node) {
+    const id = node.id;
+    const declaraciones = node.dcls;
+    const struct = new Struct(id, declaraciones);
+
+    this.entornoActual.agregarVariable(id, "struct", struct);
   }
 
 }
