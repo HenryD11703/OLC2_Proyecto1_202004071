@@ -1359,7 +1359,7 @@ export class Struct extends Expresion {
     /**
     * @param {Object} options
     * @param {string} options.id Identificador del struct
- * @param {Declaracion[]} options.dcls Declaraciones de variables del struct
+ * @param {Expresion[]} options.dcls Declaraciones de variables del struct
     */
     constructor({ id, dcls }) {
         super();
@@ -1373,7 +1373,7 @@ export class Struct extends Expresion {
 
         /**
          * Declaraciones de variables del struct
-         * @type {Declaracion[]}
+         * @type {Expresion[]}
         */
         this.dcls = dcls;
 
@@ -1387,4 +1387,185 @@ export class Struct extends Expresion {
     }
 }
     
-export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix, MatrixSimple, AsignacionMatrix, AccesoMatrix, Struct }
+export class StructVar extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo de la variable
+ * @param {string} options.id Identificador de la variable
+ * @param {Expresion} options.valor Valor inicial de la variable
+    */
+    constructor({ tipo, id, valor }) {
+        super();
+        
+        /**
+         * Tipo de la variable
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador de la variable
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Valor inicial de la variable
+         * @type {Expresion}
+        */
+        this.valor = valor;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitStructVar(this);
+    }
+}
+    
+export class StructVarSimple extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.tipo Tipo de la variable
+ * @param {string} options.id Identificador de la variable
+    */
+    constructor({ tipo, id }) {
+        super();
+        
+        /**
+         * Tipo de la variable
+         * @type {string}
+        */
+        this.tipo = tipo;
+
+
+        /**
+         * Identificador de la variable
+         * @type {string}
+        */
+        this.id = id;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitStructVarSimple(this);
+    }
+}
+    
+export class Instancia extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador de la clase
+ * @param {Expresion[]} options.args Argumentos de la instancia
+    */
+    constructor({ id, args }) {
+        super();
+        
+        /**
+         * Identificador de la clase
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Argumentos de la instancia
+         * @type {Expresion[]}
+        */
+        this.args = args;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitInstancia(this);
+    }
+}
+    
+export class Get extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.Objetivo Expresion que representa el objetivo del get
+ * @param {string} options.Propiedad Nombre de la propiedad del get
+    */
+    constructor({ Objetivo, Propiedad }) {
+        super();
+        
+        /**
+         * Expresion que representa el objetivo del get
+         * @type {Expresion}
+        */
+        this.Objetivo = Objetivo;
+
+
+        /**
+         * Nombre de la propiedad del get
+         * @type {string}
+        */
+        this.Propiedad = Propiedad;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitGet(this);
+    }
+}
+    
+export class Set extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.Objetivo Expresion que representa el objetivo del set
+ * @param {string} options.Propiedad Nombre de la propiedad del set
+ * @param {Expresion} options.Valor Valor a establecer en la propiedad
+    */
+    constructor({ Objetivo, Propiedad, Valor }) {
+        super();
+        
+        /**
+         * Expresion que representa el objetivo del set
+         * @type {Expresion}
+        */
+        this.Objetivo = Objetivo;
+
+
+        /**
+         * Nombre de la propiedad del set
+         * @type {string}
+        */
+        this.Propiedad = Propiedad;
+
+
+        /**
+         * Valor a establecer en la propiedad
+         * @type {Expresion}
+        */
+        this.Valor = Valor;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitSet(this);
+    }
+}
+    
+export default { Expresion, Nativo, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, DeclaracionSimple, DeclaracionSinTipo, ReferenciaVariable, Print, Statement, Asignacion, Bloque, If, Ternary, While, For, Switch, Break, Continue, Return, Llamada, Array, ArraySimple, ArrayCopia, AccesoVector, AsignacionArray, Foreach, IndexOf, Length, Join, Funcion, Typeof, Matrix, MatrixSimple, AsignacionMatrix, AccesoMatrix, Struct, StructVar, StructVarSimple, Instancia, Get, Set }

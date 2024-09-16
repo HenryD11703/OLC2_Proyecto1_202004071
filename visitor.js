@@ -117,6 +117,21 @@
 
  * @typedef {import('./nodos').Struct} Struct
 
+
+ * @typedef {import('./nodos').StructVar} StructVar
+
+
+ * @typedef {import('./nodos').StructVarSimple} StructVarSimple
+
+
+ * @typedef {import('./nodos').Instancia} Instancia
+
+
+ * @typedef {import('./nodos').Get} Get
+
+
+ * @typedef {import('./nodos').Set} Set
+
  */
 
 
@@ -475,6 +490,51 @@ export class BaseVisitor {
      */
     visitStruct(node) {
         throw new Error('Metodo visitStruct no implementado');
+    }
+    
+
+    /**
+     * @param {StructVar} node
+     * @returns {any}
+     */
+    visitStructVar(node) {
+        throw new Error('Metodo visitStructVar no implementado');
+    }
+    
+
+    /**
+     * @param {StructVarSimple} node
+     * @returns {any}
+     */
+    visitStructVarSimple(node) {
+        throw new Error('Metodo visitStructVarSimple no implementado');
+    }
+    
+
+    /**
+     * @param {Instancia} node
+     * @returns {any}
+     */
+    visitInstancia(node) {
+        throw new Error('Metodo visitInstancia no implementado');
+    }
+    
+
+    /**
+     * @param {Get} node
+     * @returns {any}
+     */
+    visitGet(node) {
+        throw new Error('Metodo visitGet no implementado');
+    }
+    
+
+    /**
+     * @param {Set} node
+     * @returns {any}
+     */
+    visitSet(node) {
+        throw new Error('Metodo visitSet no implementado');
     }
     
 }

@@ -41,6 +41,9 @@
       'asignacionMatrix': nodos.AsignacionMatrix,
       'accesoMatrix': nodos.AccesoMatrix,
       'struct': nodos.Struct,
+      'structVar': nodos.StructVar,
+      'structVarSimple': nodos.StructVarSimple,
+      'instancia': nodos.Instancia
     }
 
     const nodo = new tipos[tipoNodo](props);
@@ -73,6 +76,11 @@ Declaracion = dcl:Variable _ { return dcl }
             / func:FuncDcl _ { return func }
             / stmt:Statement _ { return stmt }
             / struct:Struct _ { return struct }
+            / varStruct:StructVar _ { return varStruct }
+
+StructVar = _ tipo:Identificador _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('structVar', { tipo, id, valor:exp }) }
+        / _ tipo:Identificador _ id:Identificador _ ";" { return crearNodo('structVarSimple', { tipo, id }) }
+
 
 
 // Problema: cuando se crea un struct se le pude poner otra propiedad que sea otro struct :(
@@ -137,9 +145,13 @@ Array = _ tipo:("int" / "float" / "string" / "boolean" / "char") _ "[" _ "]" _ i
 // la normal de declarar con el tipo, el id y el valor
 // donde solo se declara el tipo y el valor
 // y donde no se da un tipo sino que solo el valor
+
+// Las ultimas son auxiliares para cuando se cree una variable tipo struct, tanto en la instancia como en la 
+// asignacion de propiedades del struct
+
 Variable = _ tipo:("var") _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('typeLessDcl', { id, valor:exp }) }
-        /  _ tipo:("int" / "float" / "string" / "boolean" / "char" / Identificador) _ id:Identificador _ ";"{ return crearNodo('simpleDcl', { tipo, id })}
-        /  _ tipo:("int" / "float" / "string" / "boolean" / "char" / Identificador) _ id:Identificador  _ "=" _ exp:Expresion _ ";"{ return crearNodo('declaracionVar', { tipo, id, valor:exp})}
+        /  _ tipo:("int" / "float" / "string" / "boolean" / "char" ) _ id:Identificador  _ "=" _ exp:Expresion _ ";"{ return crearNodo('declaracionVar', { tipo, id, valor:exp})}
+        /  _ tipo:("int" / "float" / "string" / "boolean" / "char" ) _ id:Identificador _ ";"{ return crearNodo('simpleDcl', { tipo, id })} 
 
 // Statement = "System.out.println(" _ exp:Expresion ")" ";" { return crearNodo('print', {exp})}
 Statement = "System.out.println(" _ args:ArgumentosPrint _ ")" _ ";" { return crearNodo('print', {args})}
@@ -181,6 +193,11 @@ ArgumentosPrint = arg:Expresion args:( _ "," _ exp:Expresion { return exp })* { 
 Identificador = [a-zA-Z_][a-zA-Z0-9_]* { return text() }
 
 Expresion = Asignacion
+            /  AsignacionConDosP
+          
+
+// AsignacionConDosP es lo mismo que asignacion pero solo que con : en vez de = y no se puede esto de += -= ni nada de eso y solo sera para variables
+
 
 Asignacion = id:Identificador _ "[" _ index:Expresion _ "]" indexA:( _ "[" _ index2:Expresion _ "]" { return index2 })+ _ op:("+=" / "-=" / "=") _ exp:Asignacion { 
 
@@ -219,6 +236,10 @@ Asignacion = id:Identificador _ "[" _ index:Expresion _ "]" indexA:( _ "[" _ ind
               }
             }
           / TernaryOp
+
+
+AsignacionConDosP = id:Identificador _ ":" _ exp:AsignacionConDosP { return crearNodo('asignacion', { id, exp }) }
+                  / TernaryOp
 
 TernaryOp = cond:OperacionOr _ "?" _ expTrue:Expresion _ ":" _ expFalse:Expresion { return crearNodo('ternario', { condicion:cond, expTrue, expFalse }) }
           / OperacionOr
@@ -328,7 +349,9 @@ Nativo = [0-9]+ "." [0-9]+ { return crearNodo('nativo', { tipo: 'float', valor: 
         / id:Identificador ".indexOf(" _ exp:Expresion _ ")" { return crearNodo('indexof', {id, exp}) }
         / id:Identificador ".join(" _ ")" { return crearNodo('join', {id}) }
         / id:Identificador ".length" { return crearNodo('length', {id}) }
+        / idS:Identificador _ "{" _  attr:Argumentos* _  "}" { return crearNodo('instancia', { id: idS, args: attr || [] }) }
         / id:Identificador { return crearNodo('accesoVar', {id}) }
+
 
 _ = ([ \t\n\r] / Comments)*
 

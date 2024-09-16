@@ -364,6 +364,8 @@ export class InterpretarVisitor extends BaseVisitor {
       this.entornoActual.agregarVariable(nombre, tipo, valor.valor);
     }
   }
+
+
   /**
    * @type {BaseVisitor['visitReferenciaVariable']}
    */
@@ -425,6 +427,13 @@ export class InterpretarVisitor extends BaseVisitor {
     const tipo = node.tipo;
     const nombre = node.id;
     // Esta forma de declaracion no cuenta con un valor inicial y se le pone null
+    // tambien puede tener como tipo el nombre de un struct
+    // buscar que exista un struct con ese nombre
+    if (this.entornoActual.verificarVariableExiste(nombre)) {
+      this.consola += `Error: variable ${nombre} ya declarada\n`;
+      return;
+    }
+
     this.entornoActual.agregarVariable(nombre, tipo, null);
   }
 
@@ -1180,8 +1189,6 @@ export class InterpretarVisitor extends BaseVisitor {
 
     const matriz = crearMatriz([size1, ...sizes]);
 
-    console.log(`${tipo}[]`.repeat(dimensiones), matriz);
-
     this.entornoActual.agregarVariable(
       id,
       `${tipo}[]`.repeat(dimensiones),
@@ -1301,12 +1308,26 @@ export class InterpretarVisitor extends BaseVisitor {
   visitStruct(node) {
     const id = node.id;
     const declaraciones = node.dcls;
-    const struct = new Struct(id, declaraciones);
+   
 /*
 ● Los structs solo pueden ser declarados en el ámbito global
 ● Los structs deben tener al menos un atributo.
 ● No se podrán agregar más atributos a un struct una vez ha sido definido.
 */
+
+    const propiedades = {};
+
+    declaraciones.forEach((declaracion) => {
+      if (declaracion.valor !== undefined) {
+        propiedades[declaracion.id] = { tipo: declaracion.tipo, valor: declaracion.valor };
+      } else {
+        propiedades[declaracion.id] = { tipo: declaracion.tipo, valor: null };
+      }
+    });
+
+    // declaraciones es un objeto con un par de id y tipo
+    console.log(propiedades);
+
     if (!this.entornoActual.esEntornoGlobal()) {
       this.consola += `Error: Los structs solo pueden ser declarados en el ámbito global\n`;
       return;
@@ -1322,7 +1343,107 @@ export class InterpretarVisitor extends BaseVisitor {
       return;
     }
 
-    this.entornoActual.agregarVariable(id, "struct", struct);
+    const struct = new Struct(id, propiedades);
+
+    let nombreTipo = `Struct: ${id}`;
+
+    this.entornoActual.agregarVariable(id, nombreTipo, struct);
+
+    console.log(this.entornoActual.variables);
+
   }
+
+
+
+  /**
+   * @type {BaseVisitor['visitStructVar']}
+   */
+  visitStructVar(node) {
+    const tipo = node.tipo; // Tipo de la variable, tiene que existir un struct de este tipo sino es error
+    const id = node.id; // Nombre de la variable
+    const valor = node.valor.accept(this); // Valor de la variable
+    // Verificar que la variable no haya sido asignada previamente
+    if (this.entornoActual.verificarVariableExisteEnEntornoActual(id)) {
+      this.consola += `Error: variable ${id} ya declarada\n`;
+      return;
+    }
+    // Verificar si existe un struct con ese nombre en la tabla de simbolos
+    if (!this.entornoActual.verificarVariableExiste(tipo)) {
+      this.consola += `Error: struct ${tipo} no declarado\n`;
+      return;
+    }
+    // valor seria como el retorno de la instancia del struct osea un objeto con el tipo y valor pero donde valor es 
+    // el struct en si
+
+    this.entornoActual.agregarVariable(id, tipo, valor);
+
+  }
+
+  visitStructVarSimple(node) {
+    const tipo = node.tipo; // Tipo de la variable, tiene que existir un struct de este tipo sino es error
+    const id = node.id; // Nombre de la variable
+    //Como esta forma de asignacion no tiene nada se le asigna null y ya
+    if (this.entornoActual.verificarVariableExisteEnEntornoActual(id)) {
+      this.consola += `Error: variable ${id} ya declarada\n`;
+      return;
+    }
+    // Verificar si existe un struct con ese nombre en la tabla de simbolos
+    if (!this.entornoActual.verificarVariableExiste(tipo)) {
+      this.consola += `Error: struct ${tipo} no declarado\n`;
+      return;
+    }
+    this.entornoActual.agregarVariable(id, tipo, null);
+  }
+
+
+  /**
+   * @type {BaseVisitor['visitInstancia']}
+   */
+  visitInstancia(node) {
+    const id = node.id;
+    const argumentos = node.args.map((arg) => arg.accept(this));
+
+    const struct = this.entornoActual.obtenerValorVariable(id);
+    // Aca basicamente se tratara de retornar la dupla de siempre de tipo y valor
+    const instancia = struct.valor.invocar(this, argumentos);
+    console.log(instancia);
+    return { tipo: id, valor: instancia };
+  }
+
+  /**
+   * @type {BaseVisitor['visitGet']}
+   */
+  visitGet(node) {
+    const instancia = node.Objetivo.accept(this);
+
+    return instancia.valor.getPropiedad(node.Propiedad);
+  }
+
+    /**
+   * @type {BaseVisitor['visitSet']}
+   */
+    visitSet(node) {
+      const instancia = node.Objetivo.accept(this);
+      const valor = node.Valor.accept(this);
+    
+      if (instancia.valor && instancia.valor.propiedades) {
+        const propiedad = instancia.valor.propiedades[node.Propiedad];
+        if (propiedad) {
+          if (propiedad.tipo === valor.tipo) {
+            instancia.valor.setPropiedad(node.Propiedad, propiedad.tipo, valor.valor);
+            return valor;
+          } else {
+            this.consola += `Error: Tipo incompatible al asignar a '${node.Propiedad}'\n`;
+            return { tipo: null, valor: null };
+          }
+        } else {
+          this.consola += `Error: La propiedad '${node.Propiedad}' no existe en el struct\n`;
+          return { tipo: null, valor: null };
+        }
+      } else {
+        this.consola += `Error: El objetivo no es una instancia de struct válida\n`;
+        return { tipo: null, valor: null };
+      }
+    }
 
 }
