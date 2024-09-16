@@ -43,4 +43,13 @@ export class Entorno {
         }
         return false;
     }
+
+    verificarVariableExisteEnEntornoActual(id) {
+        return this.variables.hasOwnProperty(id);
+    }
+
+    esEntornoGlobal() {
+        return this.padre === undefined;
+    }
+
 }

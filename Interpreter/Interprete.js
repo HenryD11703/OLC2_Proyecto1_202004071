@@ -342,6 +342,12 @@ export class InterpretarVisitor extends BaseVisitor {
 
     // Verificar que la variable no haya sido asignada previamente
 
+    if (this.entornoActual.verificarVariableExisteEnEntornoActual(nombre)) {
+      this.consola += `Error: variable ${nombre} ya declarada\n`;
+      return;
+    }
+
+
     // Verificar los tipos de valor y de tipo
     // tipo es la parte de la gramática y valor.tipo sería el tipo verdadero del dato
     // en tipo es int, float, string, boolean, char
@@ -1296,6 +1302,25 @@ export class InterpretarVisitor extends BaseVisitor {
     const id = node.id;
     const declaraciones = node.dcls;
     const struct = new Struct(id, declaraciones);
+/*
+● Los structs solo pueden ser declarados en el ámbito global
+● Los structs deben tener al menos un atributo.
+● No se podrán agregar más atributos a un struct una vez ha sido definido.
+*/
+    if (!this.entornoActual.esEntornoGlobal()) {
+      this.consola += `Error: Los structs solo pueden ser declarados en el ámbito global\n`;
+      return;
+    }
+
+    if (declaraciones.length === 0) {
+      this.consola += `Error: Los structs deben tener al menos un atributo\n`;
+      return;
+    }
+
+    if (this.entornoActual.verificarVariableExiste(id)) {
+      this.consola += `Error: El struct '${id}' ya ha sido definido\n`;
+      return;
+    }
 
     this.entornoActual.agregarVariable(id, "struct", struct);
   }
