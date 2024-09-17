@@ -96,7 +96,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "float", valor: izq.valor - der.valor };
         } else {
           this.consola += `Error de tipos: no se puede restar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede restar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede restar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "*":
@@ -111,14 +111,14 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "float", valor: izq.valor * der.valor };
         } else {
           this.consola += `Error de tipos: no se puede multiplicar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede multiplicar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede multiplicar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "/":
         // se debe verificar que no se divida entre 0
         if (der.valor === 0) {
           this.consola += `Error: no se pueden hacer divisiones entre 0\n`;
-          this.errores.agregarError("Error: no se pueden hacer divisiones entre 0", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error: no se pueden hacer divisiones entre 0`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
         // se hara lo mismo que en la resta y multiplicacion
@@ -132,7 +132,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "float", valor: izq.valor / der.valor };
         } else {
           this.consola += `Error de tipos: no se puede dividir ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede dividir ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede dividir ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "||":
@@ -147,7 +147,7 @@ export class InterpretarVisitor extends BaseVisitor {
           };
         } else {
           this.consola += `Error de tipos: no se puede hacer la operacion OR entre ${izq.tipo} y ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede hacer la operacion OR entre ${izq.tipo} y ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede hacer la operacion OR entre ${izq.tipo} y ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "&&":
@@ -161,7 +161,7 @@ export class InterpretarVisitor extends BaseVisitor {
           };
         } else {
           this.consola += `Error de tipos: no se puede hacer la operacion AND entre ${izq.tipo} y ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede hacer la operacion AND entre ${izq.tipo} y ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede hacer la operacion AND entre ${izq.tipo} y ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "==":
@@ -193,7 +193,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "boolean", valor: izq.valor === der.valor };
         } else {
           this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "!=":
@@ -217,7 +217,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "boolean", valor: izq.valor !== der.valor };
         } else {
           this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case ">":
@@ -231,7 +231,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "boolean", valor: izq.valor > der.valor };
         } else {
           this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "<":
@@ -245,7 +245,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "boolean", valor: izq.valor < der.valor };
         } else {
           this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case ">=":
@@ -259,7 +259,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "boolean", valor: izq.valor >= der.valor };
         } else {
           this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "<=":
@@ -273,7 +273,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "boolean", valor: izq.valor <= der.valor };
         } else {
           this.consola += `Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede comparar ${izq.tipo} con ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "%":
@@ -282,12 +282,12 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "int", valor: izq.valor % der.valor };
         } else {
           this.consola += `Error de tipos: no se puede hacer modulo entre ${izq.tipo} y ${der.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede hacer modulo entre ${izq.tipo} y ${der.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede hacer modulo entre ${izq.tipo} y ${der.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       default:
         this.consola += `Error de tipos: operador ${node.op} no soportado\n`;
-        this.errores.agregarError("Error de tipos: operador ${node.op} no soportado", node.location.start.line, node.location.start.column, "Semantico");
+        this.errores.agregarError(`Error de tipos: operador ${node.op} no soportado`, node.location.start.line, node.location.start.column, "Semantico");
     }
   }
 
@@ -313,7 +313,7 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "float", valor: -exp.valor };
         } else {
           this.consola += `Error de tipos: no se puede hacer negativo a ${exp.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede hacer negativo a ${exp.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede hacer negativo a ${exp.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       case "!":
@@ -325,12 +325,12 @@ export class InterpretarVisitor extends BaseVisitor {
           return { tipo: "boolean", valor: !exp.valor };
         } else {
           this.consola += `Error de tipos: no se puede hacer negacion a ${exp.tipo}\n`;
-          this.errores.agregarError("Error de tipos: no se puede hacer negacion a ${exp.tipo}", node.location.start.line, node.location.start.column, "Semantico");
+          this.errores.agregarError(`Error de tipos: no se puede hacer negacion a ${exp.tipo}`, node.location.start.line, node.location.start.column, "Semantico");
           return { tipo: null, valor: null };
         }
       default:
         this.consola += `Error de tipos: operador ${node.op} no soportado\n`;
-        this.errores.agregarError("Error de tipos: operador ${node.op} no soportado", node.location.start.line, node.location.start.column, "Semantico");
+        this.errores.agregarError(`Error de tipos: operador ${node.op} no soportado`, node.location.start.line, node.location.start.column, "Semantico");
     }
   }
 
@@ -367,7 +367,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (this.entornoActual.verificarVariableExisteEnEntornoActual(nombre)) {
       this.consola += `Error: variable ${nombre} ya declarada\n`;
-      this.errores.agregarError("Error: variable ${nombre} ya declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable ${nombre} ya declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return;
     }
 
@@ -380,7 +380,7 @@ export class InterpretarVisitor extends BaseVisitor {
       this.entornoActual.agregarVariable(nombre, tipo, parseFloat(valor.valor));
     } else if (tipo !== valor.tipo) {
       this.consola += `Error de tipos: no se puede asignar ${valor.tipo} a ${tipo}\n`;
-      this.errores.agregarError("Error de tipos: no se puede asignar ${valor.tipo} a ${tipo}", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: no se puede asignar ${valor.tipo} a ${tipo}`, node.location.start.line, node.location.start.column, "Semantico");
       // Si es un error, se asigna null a la variable para que
       // el árbol se siga recorriendo y cualquier otra operación que involucre
       // a esta variable tenga como resultado null
@@ -403,7 +403,7 @@ export class InterpretarVisitor extends BaseVisitor {
     // nativo es un objeto { tipo: string, valor: any }
     if (nativo.valor === null) {
       this.consola += `Error: variable ${nombre} no declarada\n`;
-      this.errores.agregarError("Error: variable ${nombre} no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable ${nombre} no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
     return nativo;
@@ -460,7 +460,7 @@ export class InterpretarVisitor extends BaseVisitor {
     // buscar que exista un struct con ese nombre
     if (this.entornoActual.verificarVariableExisteEnEntornoActual(nombre)) {
       this.consola += `Error: variable ${nombre} ya declarada\n`;
-      this.errores.agregarError("Error: variable ${nombre} ya declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable ${nombre} ya declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return;
     }
 
@@ -508,7 +508,7 @@ export class InterpretarVisitor extends BaseVisitor {
     } else {
       // asignar null
       this.consola += `Error de tipos: no se puede asignar ${exp.tipo} a ${nombre}\n`;
-      this.errores.agregarError("Error de tipos: no se puede asignar ${exp.tipo} a ${nombre}", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: no se puede asignar ${exp.tipo} a ${nombre}`, node.location.start.line, node.location.start.column, "Semantico");
       this.entornoActual.asignarValorVariable(nombre, null);
       return { tipo: null, valor: null };
     }
@@ -739,7 +739,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!funcionObj.tipo instanceof LlamadaFunc) {
       this.consola += `Error: '${node.callee}' no es una función\n`;
-      this.errores.agregarError("Error: '${node.callee}' no es una función", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${node.callee}' no es una función`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
     return funcionObj.tipo.invocar(this, argumentos);
@@ -755,12 +755,12 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (valores.some((valor) => valor.tipo !== tipo)) {
       this.consola += `Error de tipos: no todos los elementos del array son de tipo ${tipo}\n`;
-      this.errores.agregarError("Error de tipos: no todos los elementos del array son de tipo ${tipo}", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: no todos los elementos del array son de tipo ${tipo}`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
     if (this.entornoActual.verificarVariableExisteEnEntornoActual(nombre)) {
       this.consola += `Error: variable ${nombre} ya declarada\n`;
-      this.errores.agregarError("Error: variable ${nombre} ya declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable ${nombre} ya declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
     const arrayTipo = `${tipo}[]`; // Representación del tipo de array
@@ -782,7 +782,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (size.tipo !== "int") {
       this.consola += `Error de tipos: el tamaño del array debe ser un entero\n`;
-      this.errores.agregarError("Error de tipos: el tamaño del array debe ser un entero", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: el tamaño del array debe ser un entero`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -795,7 +795,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (this.entornoActual.verificarVariableExiste(nombre)) {
       this.consola += `Error: variable ${nombre} ya declarada\n`;
-      this.errores.agregarError("Error: variable ${nombre} ya declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable ${nombre} ya declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -844,7 +844,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!this.entornoActual.verificarVariableExiste(otroArray)) {
       this.consola += `Error: variable '${otroArray}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${otroArray}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${otroArray}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -864,7 +864,7 @@ export class InterpretarVisitor extends BaseVisitor {
     // Si no se cumple la condicion anterior se reporta un error
     else {
       this.consola += `Error de tipos: los tipos de los arrays deben ser iguales\n`;
-      this.errores.agregarError("Error de tipos: los tipos de los arrays deben ser iguales", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: los tipos de los arrays deben ser iguales`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -882,7 +882,7 @@ export class InterpretarVisitor extends BaseVisitor {
     // Buscar la variable en la tabla de simbolos y verificar que sea un array
     if (!this.entornoActual.verificarVariableExiste(nombre)) {
       this.consola += `Error: variable '${nombre}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${nombre}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${nombre}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -890,13 +890,13 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!variable.tipo.endsWith("[]")) {
       this.consola += `Error: '${nombre}' no es un array\n`;
-      this.errores.agregarError("Error: '${nombre}' no es un array", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${nombre}' no es un array`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
     if (indice.tipo !== "int") {
       this.consola += `Error de tipos: el índice debe ser un entero\n`;
-      this.errores.agregarError("Error de tipos: el índice debe ser un entero", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: el índice debe ser un entero`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -919,7 +919,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!this.entornoActual.verificarVariableExiste(nombre)) {
       this.consola += `Error: variable '${nombre}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${nombre}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${nombre}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -927,13 +927,13 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!variable.tipo.endsWith("[]")) {
       this.consola += `Error: '${nombre}' no es un array\n`;
-      this.errores.agregarError("Error: '${nombre}' no es un array", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${nombre}' no es un array`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
     if (indice.tipo !== "int") {
       this.consola += `Error de tipos: el índice debe ser un entero\n`;
-      this.errores.agregarError("Error de tipos: el índice debe ser un entero", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: el índice debe ser un entero`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -952,7 +952,7 @@ export class InterpretarVisitor extends BaseVisitor {
         expresion.tipo = "float";
       } else {
         this.consola += `Error de tipos: no se puede asignar ${expresion.tipo} a un array de ${tipoArray}\n`;
-        this.errores.agregarError("Error de tipos: no se puede asignar ${expresion.tipo} a un array de ${tipoArray}", node.location.start.line, node.location.start.column, "Semantico");
+        this.errores.agregarError(`Error de tipos: no se puede asignar ${expresion.tipo} a un array de ${tipoArray}`, node.location.start.line, node.location.start.column, "Semantico");
         return { tipo: null, valor: null };
       }
     }
@@ -1011,7 +1011,7 @@ export class InterpretarVisitor extends BaseVisitor {
     const arrayTipo = arrayExp.tipo.slice(0, -2); // Remove '[]'
     if (arrayTipo !== node.tipo) {
       this.consola += `Error: El tipo del elemento (${node.tipo}) no coincide con el tipo del array (${arrayTipo})\n`;
-      this.errores.agregarError("Error: El tipo del elemento (${node.tipo}) no coincide con el tipo del array (${arrayTipo})", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: El tipo del elemento (${node.tipo}) no coincide con el tipo del array (${arrayTipo})`, node.location.start.line, node.location.start.column, "Semantico");
       return;
     }
 
@@ -1073,7 +1073,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!this.entornoActual.verificarVariableExiste(id)) {
       this.consola += `Error: variable '${id}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${id}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${id}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: "int", valor: -1 };
     }
 
@@ -1081,13 +1081,13 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!variable.tipo.endsWith("[]")) {
       this.consola += `Error: '${id}' no es un array\n`;
-      this.errores.agregarError("Error: '${id}' no es un array", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${id}' no es un array`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: "int", valor: -1 };
     }
 
     if (exp.tipo !== variable.tipo.slice(0, -2)) {
       this.consola += `Error de tipos: el tipo de la expresión debe coincidir con el tipo del array\n`;
-      this.errores.agregarError("Error de tipos: el tipo de la expresión debe coincidir con el tipo del array", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error de tipos: el tipo de la expresión debe coincidir con el tipo del array`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: "int", valor: -1 };
     }
 
@@ -1113,7 +1113,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!this.entornoActual.verificarVariableExiste(id)) {
       this.consola += `Error: variable '${id}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${id}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${id}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: "int", valor: -1 };
     }
 
@@ -1121,7 +1121,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!variable.tipo.endsWith("[]")) {
       this.consola += `Error: '${id}' no es un array\n`;
-      this.errores.agregarError("Error: '${id}' no es un array", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${id}' no es un array`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: "int", valor: -1 };
     }
 
@@ -1136,7 +1136,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!this.entornoActual.verificarVariableExiste(id)) {
       this.consola += `Error: variable '${id}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${id}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${id}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: "string", valor: "" };
     }
 
@@ -1144,7 +1144,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!variable.tipo.endsWith("[]")) {
       this.consola += `Error: '${id}' no es un array\n`;
-      this.errores.agregarError("Error: '${id}' no es un array", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${id}' no es un array`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
 
@@ -1242,7 +1242,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (tipo !== tipo2) {
       this.consola += `Error: El tipo ${tipo} y ${tipo2} deben ser iguales\n`;
-      this.errores.agregarError("Error: El tipo ${tipo} y ${tipo2} deben ser iguales", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: El tipo ${tipo} y ${tipo2} deben ser iguales`, node.location.start.line, node.location.start.column, "Semantico");
       return;
     }
 
@@ -1292,7 +1292,7 @@ export class InterpretarVisitor extends BaseVisitor {
   
     if (!this.entornoActual.verificarVariableExiste(id)) {
       this.consola += `Error: variable '${id}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${id}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${id}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
   
@@ -1300,14 +1300,14 @@ export class InterpretarVisitor extends BaseVisitor {
   
     if (!variable.tipo.endsWith("[]")) {
       this.consola += `Error: '${id}' no es una matriz\n`;
-      this.errores.agregarError("Error: '${id}' no es una matriz", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${id}' no es una matriz`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
   
     const dimensiones = variable.tipo.split("[]").length - 1;
     if (dimensiones !== indices.length + 1) {
       this.consola += `Error: número incorrecto de índices para la matriz '${id}'\n`;
-      this.errores.agregarError("Error: número incorrecto de índices para la matriz '${id}'", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: número incorrecto de índices para la matriz '${id}'`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
   
@@ -1360,7 +1360,7 @@ export class InterpretarVisitor extends BaseVisitor {
   
     if (!this.entornoActual.verificarVariableExiste(id)) {
       this.consola += `Error: variable '${id}' no declarada\n`;
-      this.errores.agregarError("Error: variable '${id}' no declarada", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: variable '${id}' no declarada`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
   
@@ -1368,14 +1368,14 @@ export class InterpretarVisitor extends BaseVisitor {
   
     if (!variable.tipo.endsWith("[]")) {
       this.consola += `Error: '${id}' no es una matriz\n`;
-      this.errores.agregarError("Error: '${id}' no es una matriz", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: '${id}' no es una matriz`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
   
     const dimensiones = variable.tipo.split("[]").length - 1;
     if (dimensiones !== indices.length + 1) {
       this.consola += `Error: número incorrecto de índices para la matriz '${id}'\n`;
-      this.errores.agregarError("Error: número incorrecto de índices para la matriz '${id}'", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: número incorrecto de índices para la matriz '${id}'`, node.location.start.line, node.location.start.column, "Semantico");
       return { tipo: null, valor: null };
     }
   
@@ -1385,12 +1385,12 @@ export class InterpretarVisitor extends BaseVisitor {
     for (let i = 0; i < allIndices.length; i++) {
       if (allIndices[i].tipo !== "int") {
         this.consola += `Error: el índice debe ser un entero\n`;
-        this.errores.agregarError("Error: el índice debe ser un entero", node.location.start.line, node.location.start.column, "Semantico");
+        this.errores.agregarError(`Error: el índice debe ser un entero`, node.location.start.line, node.location.start.column, "Semantico");
         return { tipo: null, valor: null };
       }
       if (allIndices[i].valor < 0 || allIndices[i].valor >= current.length) {
         this.consola += `Error: índice fuera de rango\n`;
-        this.errores.agregarError("Error: índice fuera de rango", node.location.start.line, node.location.start.column, "Semantico");
+        this.errores.agregarError(`Error: índice fuera de rango`, node.location.start.line, node.location.start.column, "Semantico");
         return { tipo: null, valor: null };
       }
       current = current[allIndices[i].valor];
@@ -1427,19 +1427,19 @@ export class InterpretarVisitor extends BaseVisitor {
 
     if (!this.entornoActual.esEntornoGlobal()) {
       this.consola += `Error: Los structs solo pueden ser declarados en el ámbito global\n`;
-      this.errores.agregarError("Error: Los structs solo pueden ser declarados en el ámbito global", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: Los structs solo pueden ser declarados en el ámbito global`, node.location.start.line, node.location.start.column, "Semantico");
       return;
     }
 
     if (declaraciones.length === 0) {
       this.consola += `Error: Los structs deben tener al menos un atributo\n`;
-      this.errores.agregarError("Error: Los structs deben tener al menos un atributo", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: Los structs deben tener al menos un atributo`, node.location.start.line, node.location.start.column, "Semantico");
       return;
     }
 
     if (this.entornoActual.verificarVariableExiste(id)) {
       this.consola += `Error: El struct '${id}' ya ha sido definido\n`;
-      this.errores.agregarError("Error: El struct '${id}' ya ha sido definido", node.location.start.line, node.location.start.column, "Semantico");
+      this.errores.agregarError(`Error: El struct '${id}' ya ha sido definido`, node.location.start.line, node.location.start.column, "Semantico");
       return;
     }
 
