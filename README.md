@@ -7,7 +7,7 @@
 
 OakLand es un lenguaje de programación inspirado en la sintaxis de Java. Es un lenguaje multiparadigma que soporta tanto la programación procedimental como la programación funcional. Este manual describe las características clave del lenguaje OakLand, proporcionando detalles sobre la sintaxis, las operaciones soportadas, la estructura, entre otros aspectos.
 
-  
+![Interprete](./Reportes/Screenshot_2024-09-12-11-17-19_1920x1080.png)
 
 ## Caracteristicas Clave
 - **Sintaxis:** OakLand brinda una sintaxis simple de utilizar
@@ -136,7 +136,7 @@ string lower = toLowerCase("HOLA"); // hola
 
 ### Imagenes
 
-![Interprete](./Reportes/Screenshot_2024-09-12-11-17-19_1920x1080.png)
+
 
 ![ArchivoPrueba](./Reportes/Screenshot_2024-09-17-01-33-00_1920x1080.png)
 
