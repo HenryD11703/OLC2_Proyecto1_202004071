@@ -68,6 +68,8 @@
 
 // Ya que es a la que puede llegar directo pasando de uno en uno estas otras producciones
 
+// Oficialmente sale sin structs :(
+
 Codigo = _ dcl:Declaracion* _ { return dcl }
 
 Declaracion = dcl:Variable _ { return dcl }
