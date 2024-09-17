@@ -32,5 +32,102 @@ float decimal = 5.5;
 string text = "Hello, World";
 boolean isValid = true;
 char letter = 'A';
+```
+Las variables tambien se pueden declarar sin especificar un tipo, el lenguaje es capaz de reconocer el tipo de la variable que se esta creando
+
+```javascript
+var inferredType = 10;
+```
+
+3. Estructuras de control
+
+3.1 If else
+
+```javascript
+if (condition) {
+   // Ejecuta este bloque si la condicion es verdadera
+} else {
+   // Ejecuta este bloque si la condicion es falsa
+}
+```
+
+3.2 Switch - Case
+
+```javascript
+switch (variable) {
+   case value1:
+      // si case uno se cumple
+      break;
+   case value2:
+      // si case dos se cumple
+      break;
+   default:
+      // si ninguno se cumple
+}
 
 ```
+3.3 Blucles
+
+```javascript
+while (condition) {
+    // Repite este bloque siempre que se cumpla la condicion
+}
+
+for (int i = 0; i < 10; i++) {
+   // Repite este bloque siempre que se cumpla la condicion
+}
+```
+
+4. Arrays y matrices
+
+4.1 Arrays
+
+```javascript
+int[] numbers = {1, 2, 3, 4, 5};
+int[] numbers = new int[5]; 
+```
+4.2 Matrices
+
+```javascript
+int[][] matrix = new int[3][3];  
+matrix[0][0] = 1;
+
+```
+
+5. Funciones
+5.1 Declaracion
+
+```javascript
+int add(int a, int b) {
+   return a + b;
+}
+
+```
+
+5.2 Llamada de funciones
+```javascript
+int result = add(5, 10);
+```
+
+6. Funciones embebidas
+- `System.out.println()`: Imprime el valor o la lista de valores en consola.
+- `parseInt()`: Convierte un string a un int.
+- `parseFloat()`: Convierte un string a un float.
+- `toString()`: Convierte cualquiera de los otros tipos a string.
+- `toLowerCase()`: Convierte un string a minusculas.
+- `toUpperCase()`: Convierte un string a mayusculas.
+- `typeof()`: Retorna el tipo de una variable.
+
+6.1 Ejemplo de funciones embebidas
+
+```javascript
+System.out.println("El valor es: ", 100);
+int number = parseInt("123");
+string lower = toLowerCase("HOLA"); // hola
+
+```
+
+## Reporte de errores y Tabla de simbolos
+
+- **Reporte de Errores**: Se muestra en la consola y en la seccion de reportes los errores encontrados en la interpretacion
+- **Tabla de simbolos**: Se muestra en el area de reportes los simbolos declarados en el codigo
