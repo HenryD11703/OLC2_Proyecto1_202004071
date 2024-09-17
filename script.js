@@ -20,6 +20,7 @@ const Interpretar = document.getElementById('Interpretar');
 const consoleTextArea = document.getElementById('console-textarea');
 
 const ast = document.getElementById('ast');
+const erores = document.getElementById('errores');
 
 
 const consoleEditor = CodeMirror.fromTextArea(consoleTextArea, {
@@ -131,14 +132,20 @@ Interpretar.onclick = () => {
         const codigo = activeEditor.getValue();
         const sentencias = parse(codigo);
 
-        ast.innerHTML = JSON.stringify(sentencias, null, 2);
+        
         
         
         const interprete = new InterpretarVisitor();
 
         console.log({sentencias})
         sentencias.forEach(sentencia => sentencia.accept(interprete))
+        
+        console.log(interprete.tablaSimbolos.hacerHTML());
 
+        ast.innerHTML = interprete.tablaSimbolos.hacerHTML();
+
+        erores.innerHTML = interprete.tablaSimbolos.hacerHTML();
+        
         consoleEditor.setValue(interprete.consola);       
 
 

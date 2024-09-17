@@ -10,12 +10,15 @@ import { LlamadaFunc } from "./llamadaFunc.js";
 import { embebidas } from "./funcEmbebidas.js";
 import { funcionesForaneas } from "./funcForaneas.js";
 import { Struct } from "./struct.js";
+import { TablaSimbolos } from "./TablaSimbolos.js";
 
 export class InterpretarVisitor extends BaseVisitor {
   constructor() {
     super();
+    this.Simbolos = {};
     this.entornoActual = new Entorno(); //Entorno Padre
     this.consola = ""; // Cadena para imprimir en la consola
+    this.tablaSimbolos = new TablaSimbolos();
 
     Object.entries(embebidas).forEach(([nombre, funcion]) => {
       this.entornoActual.agregarVariable(nombre, funcion);
@@ -363,6 +366,9 @@ export class InterpretarVisitor extends BaseVisitor {
     } else {
       this.entornoActual.agregarVariable(nombre, tipo, valor.valor);
     }
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, tipo, valor.valor);
+
   }
 
 
@@ -435,6 +441,8 @@ export class InterpretarVisitor extends BaseVisitor {
     }
 
     this.entornoActual.agregarVariable(nombre, tipo, null);
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, tipo, null);
   }
 
   /**
@@ -450,6 +458,8 @@ export class InterpretarVisitor extends BaseVisitor {
     }
     // esto es facil en si por que el valor es decir el nativo ya trae el tipo que queremos
     this.entornoActual.agregarVariable(nombre, valor.tipo, valor.valor);
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, valor.tipo, valor.valor);
   }
 
   /**
@@ -723,6 +733,8 @@ export class InterpretarVisitor extends BaseVisitor {
     const arrayValor = valores.map((v) => ({ tipo: v.tipo, valor: v.valor }));
 
     this.entornoActual.agregarVariable(nombre, arrayTipo, arrayValor);
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, arrayTipo, arrayValor);
   }
 
   /**
@@ -778,6 +790,8 @@ export class InterpretarVisitor extends BaseVisitor {
     const arrayTipo = `${tipo1}[]`; // Representación del tipo de array
     const arrayValor = valores;
     this.entornoActual.agregarVariable(nombre, arrayTipo, arrayValor);
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, arrayTipo, arrayValor);
   }
 
   /**
@@ -806,6 +820,7 @@ export class InterpretarVisitor extends BaseVisitor {
     ) {
       const copiedArray = array.valor.map((item) => ({ ...item }));
       this.entornoActual.agregarVariable(nombre, tipo + "[]", copiedArray);
+      this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, tipo + "[]", copiedArray);
     }
 
     // Si no se cumple la condicion anterior se reporta un error
@@ -813,6 +828,9 @@ export class InterpretarVisitor extends BaseVisitor {
       this.consola += `Error de tipos: los tipos de los arrays deben ser iguales\n`;
       return { tipo: null, valor: null };
     }
+
+
+
   }
 
   /**
@@ -1096,6 +1114,8 @@ export class InterpretarVisitor extends BaseVisitor {
   visitFuncion(node) {
     const funcion = new funcionesForaneas(node, this.entornoActual);
     this.entornoActual.agregarVariable(node.id, funcion);
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, node.id, "funcion", "Valores de la funcion");
   }
 
   /**
@@ -1138,9 +1158,12 @@ export class InterpretarVisitor extends BaseVisitor {
 
     this.entornoActual.agregarVariable(
       id,
-      `${tipo}[]`.repeat(dimensiones),
+      `${tipo}${'[]'.repeat(dimensiones)}`,
       valoresInterpretados
     );
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, id, `${tipo}${'[]'.repeat(dimensiones)}`, valoresInterpretados);
+
   }
 
   /**
@@ -1191,9 +1214,12 @@ export class InterpretarVisitor extends BaseVisitor {
 
     this.entornoActual.agregarVariable(
       id,
-      `${tipo}[]`.repeat(dimensiones),
+      `${tipo}${'[]'.repeat(dimensiones)}`,
       matriz
     );
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, id, `${tipo}${'[]'.repeat(dimensiones)}`, matriz);
+
   }
 
   /**
@@ -1349,7 +1375,7 @@ export class InterpretarVisitor extends BaseVisitor {
 
     this.entornoActual.agregarVariable(id, nombreTipo, struct);
 
-    console.log(this.entornoActual.variables);
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, id, nombreTipo, propiedades);
 
   }
 
@@ -1377,6 +1403,9 @@ export class InterpretarVisitor extends BaseVisitor {
 
     this.entornoActual.agregarVariable(id, tipo, valor);
 
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, id, tipo, valor);
+
+
   }
 
   visitStructVarSimple(node) {
@@ -1393,6 +1422,8 @@ export class InterpretarVisitor extends BaseVisitor {
       return;
     }
     this.entornoActual.agregarVariable(id, tipo, null);
+
+    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, id, tipo, null);
   }
 
 
@@ -1444,6 +1475,10 @@ export class InterpretarVisitor extends BaseVisitor {
         this.consola += `Error: El objetivo no es una instancia de struct válida\n`;
         return { tipo: null, valor: null };
       }
+    }
+
+    reporteSimbolos(){
+      return this.entornoActual.reporteSimbolos();
     }
 
 }
