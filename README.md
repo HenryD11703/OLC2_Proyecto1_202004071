@@ -133,3 +133,11 @@ string lower = toLowerCase("HOLA"); // hola
 
 - **Reporte de Errores**: Se muestra en la consola y en la seccion de reportes los errores encontrados en la interpretacion
 - **Tabla de simbolos**: Se muestra en el area de reportes los simbolos declarados en el codigo
+
+### Imagenes
+
+![Interprete](./Reportes/Screenshot_2024-09-12-11-17-19_1920x1080.png)
+
+![ArchivoPrueba](./Reportes/Screenshot_2024-09-17-01-33-00_1920x1080.png)
+
+![Reporte](./Reportes/Screenshot_2024-09-17-01-35-37_1920x1080.png)
