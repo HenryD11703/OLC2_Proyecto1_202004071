@@ -459,9 +459,11 @@ export class InterpretarVisitor extends BaseVisitor {
     // esto es facil en si por que el valor es decir el nativo ya trae el tipo que queremos
     this.entornoActual.agregarVariable(nombre, valor.tipo, valor.valor);
 
-    this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, valor.tipo, valor.valor);
+    if (node.location) {
+      this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, valor.tipo, valor.valor);
+    }
   }
-
+  
   /**
    * @type {BaseVisitor['visitAsignacion']}
    */
