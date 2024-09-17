@@ -75,8 +75,9 @@ while (condition) {
     // Repite este bloque siempre que se cumpla la condicion
 }
 
-for (int i = 0; i < 10; i++) {
+for (int i = 0; i < 10; i+=1) {
    // Repite este bloque siempre que se cumpla la condicion
+   // Tener en cuenta que la forma de hacer el incremento es con +=
 }
 ```
 

@@ -11,6 +11,7 @@ import { embebidas } from "./funcEmbebidas.js";
 import { funcionesForaneas } from "./funcForaneas.js";
 import { Struct } from "./struct.js";
 import { TablaSimbolos } from "./TablaSimbolos.js";
+import { Erores } from "./Errores.js";
 
 export class InterpretarVisitor extends BaseVisitor {
   constructor() {
@@ -463,7 +464,7 @@ export class InterpretarVisitor extends BaseVisitor {
       this.tablaSimbolos.agregarSimbolo(node.location.start.line, node.location.start.column, nombre, valor.tipo, valor.valor);
     }
   }
-  
+
   /**
    * @type {BaseVisitor['visitAsignacion']}
    */
