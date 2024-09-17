@@ -144,7 +144,7 @@ Interpretar.onclick = () => {
 
         ast.innerHTML = interprete.tablaSimbolos.hacerHTML();
 
-        erores.innerHTML = interprete.tablaSimbolos.hacerHTML();
+        erores.innerHTML = interprete.errores.hacerHTML();
         
         consoleEditor.setValue(interprete.consola);       
 
