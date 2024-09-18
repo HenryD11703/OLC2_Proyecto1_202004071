@@ -135,3 +135,72 @@ En estas funciones se estan creando los nodos necesarios y se interpretan de est
     }
   }
 ```
+La asociatividad en las operaciones se maneja junto a la jerarquia, creando sus producciones empezando por las que menos jerarquia tengan y terminando en las operaciones con mas jerarquia
+
+```javascript
+OperacionOr = izq:OperacionAnd expansion:( _ op:("||") _ der: OperacionAnd {return { tipo:op, der}})* {
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return crearNodo('binaria', { op:tipo, izq:operacionAnterior, der})
+    },
+    izq
+  )
+}
+```
+
+Para el uso de entornos se utilizo el siguiente codigo
+
+```javascript
+export class Entorno {
+    constructor(padre = undefined) {
+        this.variables = {};
+        this.padre = padre;
+    }
+
+    asignarValorVariable(id, valor) {
+        if (this.variables.hasOwnProperty(id)) {
+            this.variables[id].valor = valor;
+        } else if (this.padre) {
+            this.padre.asignarValorVariable(id, valor);
+        } else {
+            throw new Error(`Error de referencia: variable ${id} no declarada`);
+        }
+    }
+    agregarVariable(id, tipo, valor) {
+        if (this.variables.hasOwnProperty(id)) {
+            throw new Error(`Error: variable ${id} ya declarada en este ámbito`);
+        }
+        this.variables[id] = { tipo, valor };
+    }
+    obtenerValorVariable(id) {
+        if (this.variables.hasOwnProperty(id)) {
+            return { tipo: this.variables[id].tipo, valor: this.variables[id].valor };
+        } else if (this.padre) {
+            return this.padre.obtenerValorVariable(id);
+        } else {
+            return { tipo: null, valor: null };
+        }
+    }
+    verificarVariableExiste(id) {
+        return this.variables.hasOwnProperty(id) || (this.padre && this.padre.verificarVariableExiste(id));
+    }
+    verificarVariableTipo(id, tipo) {
+        if (this.variables.hasOwnProperty(id)) {
+            return this.variables[id].tipo === tipo;
+        } else if (this.padre) {
+            return this.padre.verificarVariableTipo(id, tipo);
+        }
+        return false;
+    }
+    verificarVariableExisteEnEntornoActual(id) {
+        return this.variables.hasOwnProperty(id);
+    }
+    esEntornoGlobal() {
+        return this.padre === undefined;
+    }
+
+}
+```
+
+Este codigo se encarga de generar variables en un entorno nuevo haciendo que la declaracion de variables no interfiera con otra variable ya creada en otro entorno, y que cuando una variable se busque en un entorno anidado si no la encuentra pueda buscar en los distintos entornos padre
