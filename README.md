@@ -5,6 +5,8 @@
 
 [Manual Tecnico](/Reportes/ManualTecnico.md)
 
+[Gramatica](/Reportes/gramatica.txt)
+
 ### Descripcion General
 
 OakLand es un lenguaje de programación inspirado en la sintaxis de Java. Es un lenguaje multiparadigma que soporta tanto la programación procedimental como la programación funcional. Este manual describe las características clave del lenguaje OakLand, proporcionando detalles sobre la sintaxis, las operaciones soportadas, la estructura, entre otros aspectos.
