@@ -353,6 +353,8 @@ body {
     display: none;
     height: 100%;
     width: 100%;
+    overflow: auto;
+    /* Fix scrolling for large AST/Errors */
 }
 
 .panel-view.active {
@@ -459,118 +461,7 @@ body {
     padding: 6px;
 }
 
-/* VS Code CodeMirror Theme (Manual Injection) */
-.cm-s-vscode-dark.CodeMirror {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-}
-
-.cm-s-vscode-dark .CodeMirror-gutters {
-    background-color: #1e1e1e;
-    color: #858585;
-    border-right: none;
-}
-
-.cm-s-vscode-dark .CodeMirror-guttermarker,
-.cm-s-vscode-dark .CodeMirror-guttermarker-subtle,
-.cm-s-vscode-dark .CodeMirror-linenumber {
-    color: #858585;
-}
-
-.cm-s-vscode-dark .CodeMirror-cursor {
-    border-left: 1px solid #aeafad;
-}
-
-.cm-s-vscode-dark div.CodeMirror-selected {
-    background: #264f78;
-}
-
-.cm-s-vscode-dark .CodeMirror-line::selection,
-.cm-s-vscode-dark .CodeMirror-line>span::selection,
-.cm-s-vscode-dark .CodeMirror-line>span>span::selection {
-    background: #264f78;
-}
-
-.cm-s-vscode-dark .CodeMirror-activeline-background {
-    background: #282828;
-}
-
-.cm-s-vscode-dark .cm-keyword {
-    color: #569cd6;
-}
-
-/* Blue */
-.cm-s-vscode-dark .cm-operator {
-    color: #d4d4d4;
-}
-
-.cm-s-vscode-dark .cm-variable-2 {
-    color: #9cdcfe;
-}
-
-/* Light Blue */
-.cm-s-vscode-dark .cm-variable-3,
-.cm-s-vscode-dark .cm-type {
-    color: #4ec9b0;
-}
-
-/* Teal */
-.cm-s-vscode-dark .cm-builtin {
-    color: #4ec9b0;
-}
-
-.cm-s-vscode-dark .cm-atom {
-    color: #569cd6;
-}
-
-.cm-s-vscode-dark .cm-number {
-    color: #b5cea8;
-}
-
-/* Light Green */
-.cm-s-vscode-dark .cm-def {
-    color: #dcdcaa;
-}
-
-/* Yellow */
-.cm-s-vscode-dark .cm-string {
-    color: #ce9178;
-}
-
-/* Orange/Brown */
-.cm-s-vscode-dark .cm-string-2 {
-    color: #ce9178;
-}
-
-.cm-s-vscode-dark .cm-comment {
-    color: #6a9955;
-}
-
-/* Green */
-.cm-s-vscode-dark .cm-variable {
-    color: #9cdcfe;
-}
-
-.cm-s-vscode-dark .cm-tag {
-    color: #569cd6;
-}
-
-.cm-s-vscode-dark .cm-meta {
-    color: #d4d4d4;
-}
-
-.cm-s-vscode-dark .cm-attribute {
-    color: #9cdcfe;
-}
-
-.cm-s-vscode-dark .cm-property {
-    color: #9cdcfe;
-}
-
-.cm-s-vscode-dark .cm-qualifier {
-    color: #d4d4d4;
-}
-
-.cm-s-vscode-dark .cm-error {
-    color: #f44747;
+/* Monaco Editor Container Override if needed */
+.monaco-editor {
+    padding-top: 5px;
 }
