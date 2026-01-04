@@ -1,75 +1,153 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compi - IDE</title>
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/vscode-dark.min.css">
+    <!-- Note: Using 'vscode-dark' theme if available, otherwise we style it manually or use Dracula as base but styled -->
+
+    <!-- Material Icons (for VS Code like icons) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-    <!-- Top Navigation / Toolbar -->
-    <header class="toolbar">
-        <div class="brand">
-            <span class="logo-icon">⚡</span>
-            <span class="logo-text">Compi IDE</span>
-        </div>
-        <div class="actions">
-            <!-- File Actions -->
-            <button id="add-tab" class="btn btn-icon" title="Nueva Pestaña">+</button>
-            <button id="load-file-btn" class="btn btn-secondary">
-                Abrir Archivo
-            </button>
-            <input id="load-file-input" type="file" hidden>
-            
-            <!-- Run Actions -->
-            <button id="Interpretar" class="btn btn-primary">
-                ▶ Interpretar
-            </button>
-        </div>
-    </header>
+    <!-- Workbench Container -->
+    <div class="workbench">
 
-    <!-- Main Workspace -->
-    <main class="workspace">
-        <!-- Editor Area -->
-        <section class="editor-container">
-            <div id="tab-buttons" class="editor-tabs">
-                <!-- Dynamic Tabs injected here -->
+        <!-- Activity Bar (Leftmost) -->
+        <aside class="activity-bar">
+            <div class="activity-icon active" title="Explorer">
+                <span class="material-icons">folder_copy</span>
             </div>
-            <div id="tab-contents" class="editor-content">
-                <!-- CodeMirror instances injected here -->
+            <div class="activity-icon" title="Search">
+                <span class="material-icons">search</span>
             </div>
-        </section>
+            <div class="activity-icon" title="Source Control">
+                <span class="material-icons">call_split</span>
+            </div>
+            <div class="activity-icon" title="Run & Debug">
+                <span class="material-icons">play_arrow</span>
+            </div>
+            <div class="spacer"></div>
+            <div class="activity-icon" title="Settings">
+                <span class="material-icons">settings</span>
+            </div>
+        </aside>
 
-        <!-- Bottom Panel (Outputs) -->
-        <section class="bottom-panel">
+        <!-- Sidebar (Explorer) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span>EXPLORER</span>
+                <span class="material-icons" style="font-size: 16px;">more_horiz</span>
+            </div>
+            <div class="sidebar-content">
+                <div class="explorer-section open">
+                    <div class="section-header">
+                        <span class="material-icons arrow">expand_more</span>
+                        <span class="section-title">WORKSPACE</span>
+                    </div>
+                    <div class="file-tree">
+                        <!-- Simulated File Tree -->
+                        <div class="tree-item" id="load-file-trigger">
+                            <span class="material-icons file-icon">description</span>
+                            <span class="item-label">Abrir Archivo...</span>
+                        </div>
+                        <input id="load-file-input" type="file" hidden>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Editor Area -->
+        <main class="editor-group-container">
+            <!-- Tabs Header -->
+            <header class="editor-tabs-header">
+                <div id="tab-buttons" class="tabs-container">
+                    <!-- Dynamic Tabs -->
+                </div>
+                <div class="editor-actions">
+                    <button id="add-tab" class="action-btn" title="New File">
+                        <span class="material-icons">add</span>
+                    </button>
+                    <button id="Interpretar" class="action-btn run-btn" title="Run Code (F5)">
+                        <span class="material-icons">play_arrow</span>
+                    </button>
+                    <button class="action-btn" title="Split Editor">
+                        <span class="material-icons">vertical_split</span>
+                    </button>
+                    <button class="action-btn" title="More Actions">
+                        <span class="material-icons">more_horiz</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Editor Content -->
+            <div id="tab-contents" class="editor-body">
+                <!-- CodeMirror instances -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Resizer Handle -->
+    <div id="panel-resizer" class="sash horizontal"></div>
+
+    <!-- Bottom Panel (Terminal/Output) -->
+    <section class="bottom-panel" id="bottom-panel" style="height: 200px;">
+        <header class="panel-header">
             <div class="panel-tabs">
-                <button class="panel-tab active" data-target="console-view">Consola</button>
-                <button class="panel-tab" data-target="ast-view">AST</button>
-                <button class="panel-tab" data-target="errors-view">Errores</button>
+                <div class="panel-tab active" data-target="console-view">TERMINAL</div>
+                <div class="panel-tab" data-target="ast-view">AST</div>
+                <div class="panel-tab" data-target="errors-view">PROBLEMS</div>
             </div>
-            <div class="panel-content">
-                <div id="console-view" class="panel-view active">
-                    <textarea id="console-textarea"></textarea>
-                </div>
-                <div id="ast-view" class="panel-view">
-                    <div id="ast" class="render-output"></div>
-                </div>
-                <div id="errors-view" class="panel-view">
-                    <div id="errores" class="render-output"></div>
-                </div>
+            <div class="panel-actions">
+                <span class="material-icons" id="close-panel">close</span>
             </div>
-        </section>
-    </main>
+        </header>
+        <div class="panel-body">
+            <div id="console-view" class="panel-view active">
+                <textarea id="console-textarea"></textarea>
+            </div>
+            <div id="ast-view" class="panel-view">
+                <div id="ast" class="render-output"></div>
+            </div>
+            <div id="errors-view" class="panel-view">
+                <div id="errores" class="render-output"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+        <div class="status-left">
+            <div class="status-item"><span class="material-icons"
+                    style="font-size: 14px; margin-right: 4px;">error_outline</span>0</div>
+            <div class="status-item"><span class="material-icons"
+                    style="font-size: 14px; margin-right: 4px;">warning</span>0</div>
+        </div>
+        <div class="status-right">
+            <div class="status-item">Ln <span id="cursor-ln">1</span>, Col <span id="cursor-col">1</span></div>
+            <div class="status-item">UTF-8</div>
+            <div class="status-item">OakLand</div>
+            <div class="status-item" title="Notification"><span class="material-icons"
+                    style="font-size: 14px;">notifications_none</span></div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script type="module" src="script.js"></script>
 </body>
+
 </html>
