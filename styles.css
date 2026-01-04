@@ -1,129 +1,301 @@
+:root {
+    /* Dracula Theme Palette & Extensions */
+    --bg-main: #282a36;
+    --bg-dark: #21222c;
+    --bg-light: #44475a;
+    --bg-accent: #6272a4;
+
+    --fg-primary: #f8f8f2;
+    --fg-secondary: #b0b5c5;
+
+    --accent-primary: #bd93f9;
+    /* Purple */
+    --accent-secondary: #50fa7b;
+    /* Green */
+    --accent-danger: #ff5555;
+    /* Red */
+
+    --border-color: #44475a;
+
+    /* Dimensions */
+    --header-height: 50px;
+    --panel-height: 250px;
+
+    /* Fonts */
+    --font-ui: 'Inter', system-ui, sans-serif;
+    --font-code: 'JetBrains Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #282a36;
-    color: #f8f8f2;
+    font-family: var(--font-ui);
+    background-color: var(--bg-main);
+    color: var(--fg-primary);
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    overflow: hidden;
 }
 
-#tab-buttons {
+/* --- HEADER / TOOLBAR --- */
+.toolbar {
+    height: var(--header-height);
+    background-color: var(--bg-dark);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.brand {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+}
+
+.logo-icon {
+    color: var(--accent-secondary);
+}
+
+.actions {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
 }
 
-.tab-button, #add-tab, #Interpretar, #load-file-btn {
-    padding: 10px 20px;
-    background-color: #44475a;
-    color: #f8f8f2;
+/* Button Styles */
+.btn {
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-family: var(--font-ui);
+    transition: all 0.2s ease;
 }
 
-.tab-button.active, #add-tab:hover, #Interpretar:hover, #load-file-btn:hover {
-    background-color: #6272a4;
+.btn-icon {
+    background: transparent;
+    color: var(--fg-secondary);
+    font-size: 1.2rem;
+    padding: 5px 10px;
 }
 
-#tab-contents {
-    width: 100%;
-    max-width: 800px;
-    background-color: #44475a;
-    border-radius: 5px;
+.btn-icon:hover {
+    color: var(--fg-primary);
+    background-color: var(--bg-light);
+}
+
+.btn-secondary {
+    background-color: var(--bg-light);
+    color: var(--fg-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-accent);
+}
+
+.btn-primary {
+    background-color: var(--accent-primary);
+    color: var(--bg-dark);
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 10px rgba(189, 147, 249, 0.4);
+}
+
+/* --- WORKSPACE --- */
+.workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* --- EDITOR AREA --- */
+.editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-main);
+    overflow: hidden;
+}
+
+.editor-tabs {
+    display: flex;
+    background-color: var(--bg-dark);
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+}
+
+.editor-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    color: var(--fg-secondary);
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-right: 1px solid var(--border-color);
+    min-width: 120px;
+    text-align: left;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.tab-button:hover {
+    background-color: #2c2f3d;
+}
+
+.tab-button.active {
+    background-color: var(--bg-main);
+    color: var(--accent-primary);
+    border-top: 2px solid var(--accent-primary);
+}
+
+.editor-content {
+    flex: 1;
+    position: relative;
     overflow: hidden;
 }
 
 .tab-content {
     display: none;
+    height: 100%;
 }
 
 .tab-content.active {
     display: block;
 }
 
-textarea {
-    width: 100%;
-    height: 300px;
-    background-color: #282a36;
-    color: #f8f8f2;
-    border: none;
-    resize: none;
+/* CodeMirror Overrides to fit height */
+.CodeMirror {
+    height: 100% !important;
+    font-family: var(--font-code) !important;
+    font-size: 14px;
 }
 
-#controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-#load-file-input {
-    display: none;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #282a36;
-    color: #f8f8f2;
+/* --- BOTTOM PANEL --- */
+.bottom-panel {
+    height: var(--panel-height);
+    background-color: var(--bg-dark);
+    border-top: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
 }
 
-#tab-buttons {
+.panel-tabs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: #191a21;
 }
 
-.tab-button, #add-tab, #Interpretar, #load-file-btn {
-    padding: 10px 20px;
-    background-color: #44475a;
-    color: #f8f8f2;
+.panel-tab {
+    background: transparent;
     border: none;
-    border-radius: 5px;
+    color: var(--fg-secondary);
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    border-bottom: 2px solid transparent;
 }
 
-.tab-button.active, #add-tab:hover, #Interpretar:hover, #load-file-btn:hover {
-    background-color: #6272a4;
+.panel-tab:hover {
+    color: var(--fg-primary);
 }
 
-#tab-contents {
-    width: 100%;
-    max-width: 800px;
-    background-color: #44475a;
-    border-radius: 5px;
-    overflow: hidden;
+.panel-tab.active {
+    color: var(--fg-primary);
+    border-bottom-color: var(--accent-secondary);
 }
 
-.tab-content {
+.panel-content {
+    flex: 1;
+    overflow: auto;
+    background-color: var(--bg-main);
+    padding: 0;
+}
+
+.panel-view {
     display: none;
+    height: 100%;
 }
 
-.tab-content.active {
+.panel-view.active {
     display: block;
 }
 
-textarea {
+#console-textarea {
     width: 100%;
-    height: 300px;
-    background-color: #282a36;
-    color: #f8f8f2;
+    height: 100%;
     border: none;
+    background-color: var(--bg-main);
+    color: var(--fg-primary);
+    padding: 10px;
+    font-family: var(--font-code);
     resize: none;
+    outline: none;
 }
 
-#controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
+/* AST & Error Styling */
+.render-output {
+    padding: 20px;
+    font-family: var(--font-code);
+    color: var(--fg-primary);
 }
 
-#load-file-input {
-    display: none;
+/* Tables from JS Output */
+.symbol-table,
+.error-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1em;
+    font-family: var(--font-ui);
+    color: var(--fg-primary);
+    background-color: var(--bg-main);
+}
+
+.symbol-table th,
+.symbol-table td,
+.error-table th,
+.error-table td {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    text-align: left;
+}
+
+.symbol-table th,
+.error-table th {
+    background-color: var(--bg-light);
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.symbol-table tr:nth-child(even),
+.error-table tr:nth-child(even) {
+    background-color: var(--bg-dark);
+}
+
+.symbol-table tr:hover,
+.error-table tr:hover {
+    background-color: #3c3f58;
 }

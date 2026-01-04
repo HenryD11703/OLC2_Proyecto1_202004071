@@ -1,59 +1,60 @@
 import { InterpretarVisitor } from "./Interpreter/Interprete.js";
 import { parse } from "./Interpreter/gramatica.js";
 
-
-
-
-// Definición inicial de las pestañas
+// --- State Management ---
 const tabs = [
-    { name: 'Pestaña 1', content: '\n \n \n \n \n \n \n \n \n \n \n' }
+    { name: 'main.js', content: '// Escribe tu código aquí...\nconsole.log("Hola Mundo!");' }
 ];
+let editors = [];
 
-const editors = [];
-
-const tabButtons = document.getElementById('tab-buttons');
-const tabContents = document.getElementById('tab-contents');
+// --- DOM Elements ---
+const tabButtonsContainer = document.getElementById('tab-buttons');
+const tabContentsContainer = document.getElementById('tab-contents');
 const addTabButton = document.getElementById('add-tab');
 const loadFileBtn = document.getElementById('load-file-btn');
 const loadFileInput = document.getElementById('load-file-input');
-const Interpretar = document.getElementById('Interpretar');
+const interpretButton = document.getElementById('Interpretar');
+
 const consoleTextArea = document.getElementById('console-textarea');
+const astContainer = document.getElementById('ast');
+const errorsContainer = document.getElementById('errores');
 
-const ast = document.getElementById('ast');
-const erores = document.getElementById('errores');
-
-
+// Initialize Console Editor (Read Only)
 const consoleEditor = CodeMirror.fromTextArea(consoleTextArea, {
-  lineNumbers: true,
-  mode: "javascript",
-  theme: "dracula",
-  readOnly: true,
-  tabSize: 20
+    lineNumbers: true,
+    mode: "text/plain",
+    theme: "dracula",
+    readOnly: true
 });
 
-// Crear botones y contenido para las pestañas iniciales
-tabs.forEach((tab, index) => {
-    createTab(index);
-});
+// --- Initialization ---
 
+// Initialize default tabs
+tabs.forEach((tab, index) => createTab(index));
+openTab(0);
+setupPanelTabs();
 
+// --- Functions ---
 
-// Función para crear una nueva pestaña
 function createTab(index) {
     const tab = tabs[index];
 
+    // Create Tab Button
     const button = document.createElement('button');
     button.textContent = tab.name;
     button.className = 'tab-button';
     button.onclick = () => openTab(index);
-    tabButtons.appendChild(button);
+    tabButtonsContainer.appendChild(button);
 
+    // Create Tab Content
     const content = document.createElement('div');
     content.className = 'tab-content';
+
     const textarea = document.createElement('textarea');
     content.appendChild(textarea);
-    tabContents.appendChild(content);
+    tabContentsContainer.appendChild(content);
 
+    // Initialize CodeMirror
     const editor = CodeMirror.fromTextArea(textarea, {
         lineNumbers: true,
         mode: "javascript",
@@ -64,103 +65,115 @@ function createTab(index) {
     editors.push(editor);
 }
 
-// Función para abrir una pestaña
 function openTab(tabIndex) {
     const buttons = document.getElementsByClassName('tab-button');
     const contents = document.getElementsByClassName('tab-content');
 
+    // Deactivate all
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].classList.remove('active');
         contents[i].classList.remove('active');
     }
 
-    buttons[tabIndex].classList.add('active');
-    contents[tabIndex].classList.add('active');
+    // Activate selected
+    if (buttons[tabIndex] && contents[tabIndex]) {
+        buttons[tabIndex].classList.add('active');
+        contents[tabIndex].classList.add('active');
+        // Refresh CodeMirror to fix sizing issues when becoming visible
+        editors[tabIndex].refresh();
+    }
 }
 
-// Evento para agregar una nueva pestaña
+function setupPanelTabs() {
+    const panelTabs = document.querySelectorAll('.panel-tab');
+    const panelViews = document.querySelectorAll('.panel-view');
+
+    panelTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all
+            panelTabs.forEach(t => t.classList.remove('active'));
+            panelViews.forEach(v => v.classList.remove('active'));
+
+            // Add active class to clicked
+            tab.classList.add('active');
+            const targetId = tab.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+}
+
+// --- Event Listeners ---
+
 addTabButton.onclick = () => {
     const index = tabs.length;
-    tabs.push({ name: `Pestaña ${index + 1}`, content: '\n \n \n \n \n \n \n \n \n \n \n' });
+    const newTabName = `Archivo_${index + 1}.js`;
+    tabs.push({ name: newTabName, content: '' });
     createTab(index);
     openTab(index);
-}
+};
 
-// Evento para abrir el cuadro de diálogo de carga de archivos
 loadFileBtn.onclick = () => {
     loadFileInput.click();
-}
+};
 
-loadFileInput.addEventListener('change', function(event) {
+loadFileInput.addEventListener('change', function (event) {
     const activeIndex = Array.from(document.getElementsByClassName('tab-button'))
-                             .findIndex(button => button.classList.contains('active'));
+        .findIndex(button => button.classList.contains('active'));
     const file = event.target.files[0];
-    
+
     if (file) {
         const reader = new FileReader();
-
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const fileContent = e.target.result;
             if (activeIndex !== -1) {
                 editors[activeIndex].getDoc().setValue(fileContent);
+                // Optional: Update tab name to filename
+                document.getElementsByClassName('tab-button')[activeIndex].textContent = file.name;
             }
         }
-
         reader.readAsText(file);
     }
+    // Reset input
+    event.target.value = '';
 });
 
-
-
-
-
-// Evento para interpretar el contenido de la pestaña activa
-Interpretar.onclick = () => {
+interpretButton.onclick = () => {
     const activeIndex = Array.from(document.getElementsByClassName('tab-button'))
-                             .findIndex(button => button.classList.contains('active'));
+        .findIndex(button => button.classList.contains('active'));
 
     if (activeIndex !== -1) {
-/*      const activeEditor = editors[activeIndex];
-        console.log(activeEditor.getValue());
-        consoleEditor.setValue(activeEditor.getValue()); */
-
         const activeEditor = editors[activeIndex];
-
-        
-
-        
         const codigo = activeEditor.getValue();
-        const sentencias = parse(codigo);
 
-        
-        
-        
-        const interprete = new InterpretarVisitor();
+        try {
+            const sentencias = parse(codigo);
+            const interprete = new InterpretarVisitor();
 
-        console.log({sentencias})
-        sentencias.forEach(sentencia => sentencia.accept(interprete))
-        
-        console.log(interprete.tablaSimbolos.hacerHTML());
+            console.log({ sentencias });
 
-        ast.innerHTML = interprete.tablaSimbolos.hacerHTML();
+            // Execute
+            sentencias.forEach(sentencia => sentencia.accept(interprete));
 
-        erores.innerHTML = interprete.errores.hacerHTML();
-        
-        consoleEditor.setValue(interprete.consola);       
+            // Outputs
+            // 1. Symbol Table (AST view for now based on original code)
+            astContainer.innerHTML = interprete.tablaSimbolos.hacerHTML();
 
+            // 2. Errors
+            errorsContainer.innerHTML = interprete.errores.hacerHTML();
 
+            // 3. Console
+            consoleEditor.setValue(interprete.consola);
+
+            // Switch to Console tab automatically on run
+            document.querySelector('.panel-tab[data-target="console-view"]').click();
+
+        } catch (error) {
+            console.error(error);
+            consoleEditor.setValue("Error critico en la ejecución: " + error);
+            document.querySelector('.panel-tab[data-target="errors-view"]').click();
+        }
 
     } else {
-        console.error("No hay una pestaña activa.");
+        alert("No hay una pestaña activa.");
     }
-
-    // Actualmente Solo imprime lo del editor
-
-    // Este codigo mandar al parser 
-
-
-}
-
-
-// Abrir la primera pestaña por defecto
-openTab(0);
+};

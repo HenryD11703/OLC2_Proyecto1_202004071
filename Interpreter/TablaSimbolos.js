@@ -10,32 +10,6 @@ export class TablaSimbolos {
 
     hacerHTML() {
         let html = `
-        <style>
-            .symbol-table {
-                border-collapse: collapse;
-                width: 100%;
-                margin-bottom: 1em;
-                font-family: Arial, sans-serif;
-                color: #f8f8f2;
-                background-color: #282a36;
-            }
-            .symbol-table th, .symbol-table td {
-                border: 1px solid #44475a;
-                padding: 8px;
-                text-align: left;
-            }
-            .symbol-table th {
-                background-color: #44475a;
-                color: #ff79c6;
-                font-weight: bold;
-            }
-            .symbol-table tr:nth-child(even) {
-                background-color: #2c2f3d;
-            }
-            .symbol-table tr:hover {
-                background-color: #3c3f58;
-            }
-        </style>
         <table class="symbol-table">
             <thead>
                 <tr>
@@ -48,7 +22,7 @@ export class TablaSimbolos {
             </thead>
             <tbody>
         `;
-        
+
         this.listaSimbolos.forEach((simbolo) => {
             let valorStr = this.stringifyValue(simbolo.valor);
             html += `
@@ -61,12 +35,12 @@ export class TablaSimbolos {
                 </tr>
             `;
         });
-        
+
         html += `
             </tbody>
         </table>
         `;
-        
+
         return html;
     }
     stringifyValue(value) {

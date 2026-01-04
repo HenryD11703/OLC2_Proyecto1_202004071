@@ -3,34 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compi</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/dracula.min.css">
+    <title>Compi - IDE</title>
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>PROYECTO 1</h1>
-    <div id="tab-buttons"></div>
-    <div id="tab-contents"></div>
 
-    <!-- Controles para añadir pestañas, cargar archivo e interpretar -->
-    <div id="controls">
-        <button id="add-tab">Agregar Pestaña</button>
-        <button id="load-file-btn">Cargar Archivo</button>
-        <input id="load-file-input" type="file">
-        <button id="Interpretar">Interpretar</button>
-    </div>
+    <!-- Top Navigation / Toolbar -->
+    <header class="toolbar">
+        <div class="brand">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">Compi IDE</span>
+        </div>
+        <div class="actions">
+            <!-- File Actions -->
+            <button id="add-tab" class="btn btn-icon" title="Nueva Pestaña">+</button>
+            <button id="load-file-btn" class="btn btn-secondary">
+                Abrir Archivo
+            </button>
+            <input id="load-file-input" type="file" hidden>
+            
+            <!-- Run Actions -->
+            <button id="Interpretar" class="btn btn-primary">
+                ▶ Interpretar
+            </button>
+        </div>
+    </header>
 
-    <div id="Consola">
-        <textarea id="console-textarea"></textarea>
-      </div>    
+    <!-- Main Workspace -->
+    <main class="workspace">
+        <!-- Editor Area -->
+        <section class="editor-container">
+            <div id="tab-buttons" class="editor-tabs">
+                <!-- Dynamic Tabs injected here -->
+            </div>
+            <div id="tab-contents" class="editor-content">
+                <!-- CodeMirror instances injected here -->
+            </div>
+        </section>
 
-      <pre id="ast"></pre>
-      <pre id="errores"></pre>
-    
-    <!-- Scripts de CodeMirror -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
+        <!-- Bottom Panel (Outputs) -->
+        <section class="bottom-panel">
+            <div class="panel-tabs">
+                <button class="panel-tab active" data-target="console-view">Consola</button>
+                <button class="panel-tab" data-target="ast-view">AST</button>
+                <button class="panel-tab" data-target="errors-view">Errores</button>
+            </div>
+            <div class="panel-content">
+                <div id="console-view" class="panel-view active">
+                    <textarea id="console-textarea"></textarea>
+                </div>
+                <div id="ast-view" class="panel-view">
+                    <div id="ast" class="render-output"></div>
+                </div>
+                <div id="errors-view" class="panel-view">
+                    <div id="errores" class="render-output"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
